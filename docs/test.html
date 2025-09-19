@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GiftGenius - Test Page</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 50px 20px;
+            background: linear-gradient(135deg, #6B46C1 0%, #553C9A 100%);
+            color: white;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            min-height: calc(100vh - 140px);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .gift-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+            margin-top: 30px;
+        }
+
+        .gift-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border: 1px solid #E5E7EB;
+        }
+
+        .gift-image {
+            width: 100%;
+            height: 200px;
+            background: #F3F4F6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+
+        .gift-content {
+            padding: 18px;
+        }
+
+        .gift-title {
+            font-size: 1.15rem;
+            margin-bottom: 8px;
+            color: #1F2937;
+        }
+
+        .gift-price {
+            font-size: 1.4rem;
+            color: #6B46C1;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            background: #6B46C1;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn:hover {
+            background: #553C9A;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <h1>🎁 GiftGenius</h1>
+        <p>Find the perfect gift backed by real testimonials from men who got it right</p>
+    </div>
+
+    <div class="container">
+        <div id="loading-status" class="loading">
+            <h2>🎁 Loading gifts...</h2>
+            <p>Testing site functionality</p>
+        </div>
+
+        <div id="gift-container" style="display: none;">
+            <h2>Available Gifts</h2>
+            <div class="gift-grid" id="gift-grid">
+                <!-- Gifts will be loaded here -->
+            </div>
+        </div>
+
+        <div id="error-container" style="display: none;">
+            <h2>❌ Error Loading</h2>
+            <p id="error-message"></p>
+            <button class="btn" onclick="loadGifts()">Try Again</button>
+        </div>
+    </div>
+
+    <script>
+        console.log('GiftGenius Test Page Loading...');
+
+        // Test basic functionality
+        function updateStatus(message) {
+            document.getElementById('loading-status').innerHTML = `<h2>🎁 ${message}</h2>`;
+            console.log(message);
+        }
+
+        function showError(message) {
+            document.getElementById('loading-status').style.display = 'none';
+            document.getElementById('error-container').style.display = 'block';
+            document.getElementById('error-message').textContent = message;
+            console.error('Error:', message);
+        }
+
+        function showGifts(gifts) {
+            document.getElementById('loading-status').style.display = 'none';
+            document.getElementById('gift-container').style.display = 'block';
+
+            const grid = document.getElementById('gift-grid');
+            grid.innerHTML = '';
+
+            gifts.forEach(gift => {
+                const card = document.createElement('div');
+                card.className = 'gift-card';
+                card.innerHTML = `
+                    <div class="gift-image">🎁</div>
+                    <div class="gift-content">
+                        <h3 class="gift-title">${gift.name || gift.title}</h3>
+                        <div class="gift-price">$${gift.price}</div>
+                        <button class="btn" onclick="buyGift('${gift.name || gift.title}')">Buy Now</button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function buyGift(name) {
+            alert(`Great choice! "${name}" would make an amazing gift!`);
+        }
+
+        async function loadGifts() {
+            try {
+                updateStatus('Checking data source...');
+
+                const dataUrl = './full-data.json';
+                console.log('Fetching from:', dataUrl);
+
+                updateStatus('Loading gift data...');
+
+                const response = await fetch(dataUrl);
+                console.log('Response status:', response.status);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                console.log('Data loaded:', data);
+
+                const gifts = data.gifts || data || [];
+                console.log('Gifts found:', gifts.length);
+
+                if (!Array.isArray(gifts) || gifts.length === 0) {
+                    throw new Error('No gifts data found');
+                }
+
+                updateStatus(`Found ${gifts.length} gifts!`);
+                setTimeout(() => showGifts(gifts.slice(0, 6)), 500);
+
+            } catch (error) {
+                console.error('Load error:', error);
+
+                // Show fallback data
+                const fallbackGifts = [
+                    { name: "Beautiful Necklace", price: 89, id: 1 },
+                    { name: "Spa Day Experience", price: 150, id: 2 },
+                    { name: "Artisan Chocolate Box", price: 45, id: 3 }
+                ];
+
+                showError(`Loading error: ${error.message}. Showing sample data.`);
+                setTimeout(() => {
+                    document.getElementById('error-container').style.display = 'none';
+                    showGifts(fallbackGifts);
+                }, 2000);
+            }
+        }
+
+        // Start loading immediately
+        console.log('Starting gift load...');
+        loadGifts();
+    </script>
+</body>
+</html>
