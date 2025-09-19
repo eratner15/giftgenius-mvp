@@ -20,9 +20,12 @@
         .hero h1 { font-size: 2.5rem; color: #6B46C1; margin-bottom: 10px; }
         .hero p { color: #666; font-size: 1.1rem; }
         .filters { display: flex; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; }
-        .filters select {
+        .filters select, .filters input {
             padding: 12px; border: 1px solid #ddd; border-radius: 8px;
             font-size: 16px; background: white; min-width: 150px;
+        }
+        .filters input[type="search"] {
+            min-width: 250px;
         }
         .gift-grid {
             display: grid;
@@ -99,7 +102,7 @@
         // For demo, use static data
         const API_BASE_URL = window.location.hostname === 'localhost'
             ? 'http://localhost:3001'
-            : '/demo-data.json';
+            : './full-data.json';
 
         function App() {
             const [gifts, setGifts] = useState([]);
@@ -109,7 +112,8 @@
             const [filter, setFilter] = useState({
                 category: '',
                 maxPrice: 1000,
-                minSuccessRate: 0
+                minSuccessRate: 0,
+                search: ''
             });
 
             useEffect(() => {
@@ -157,6 +161,15 @@
                         if (filter.minSuccessRate > 0) {
                             filteredGifts = filteredGifts.filter(gift => gift.success_rate >= filter.minSuccessRate);
                         }
+                        if (filter.search) {
+                            const searchTerm = filter.search.toLowerCase();
+                            filteredGifts = filteredGifts.filter(gift =>
+                                (gift.name && gift.name.toLowerCase().includes(searchTerm)) ||
+                                (gift.title && gift.title.toLowerCase().includes(searchTerm)) ||
+                                (gift.description && gift.description.toLowerCase().includes(searchTerm)) ||
+                                (gift.category && gift.category.toLowerCase().includes(searchTerm))
+                            );
+                        }
                         setGifts(filteredGifts);
                     }
                 } catch (error) {
@@ -178,7 +191,7 @@
                         setSelectedGift(data);
                     } else {
                         // Use static data for production
-                        const response = await fetch('/demo-data.json');
+                        const response = await fetch('./full-data.json');
                         if (!response.ok) throw new Error('Failed to fetch data');
                         const data = await response.json();
 
@@ -301,6 +314,12 @@
                 ),
 
                 React.createElement('div', { className: 'filters' },
+                    React.createElement('input', {
+                        type: 'search',
+                        placeholder: '🔍 Search gifts...',
+                        value: filter.search,
+                        onChange: (e) => setFilter({...filter, search: e.target.value})
+                    }),
                     React.createElement('select', {
                         value: filter.category,
                         onChange: (e) => setFilter({...filter, category: e.target.value})
@@ -353,8 +372,11 @@
                 gifts.length === 0 ? React.createElement('div', {
                     style: { textAlign: 'center', padding: '40px', color: '#666' }
                 }, 'No gifts found. Try adjusting your filters.') :
-
-                React.createElement('div', { className: 'gift-grid' },
+                React.createElement(React.Fragment, null,
+                    React.createElement('div', {
+                        style: { marginBottom: '20px', color: '#666', fontSize: '1.1rem' }
+                    }, `Found ${gifts.length} perfect gift${gifts.length === 1 ? '' : 's'} for you`),
+                    React.createElement('div', { className: 'gift-grid' },
                     ...gifts.map(gift =>
                         React.createElement('div', {
                             key: gift.id,
@@ -376,6 +398,7 @@
                                 )
                             )
                         )
+                    )
                     )
                 )
             );
