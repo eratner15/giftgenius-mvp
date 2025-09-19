@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#FF69B4" />
+    <meta name="description" content="GiftGenius - Find the perfect gift backed by real testimonials from men" />
+    <title>GiftGenius - Gift Ideas That Actually Work</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: system-ui, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8fafc;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .loading { text-align: center; padding: 60px 20px; }
+        .hero { text-align: center; margin-bottom: 40px; }
+        .hero h1 { font-size: 2.5rem; color: #6B46C1; margin-bottom: 10px; }
+        .hero p { color: #666; font-size: 1.1rem; }
+        .filters { display: flex; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; }
+        .filters select {
+            padding: 12px; border: 1px solid #ddd; border-radius: 8px;
+            font-size: 16px; background: white; min-width: 150px;
+        }
+        .gift-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .gift-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .gift-card:hover { transform: translateY(-2px); }
+        .gift-card img { width: 100%; height: 200px; object-fit: cover; }
+        .gift-card-content { padding: 15px; }
+        .gift-card h3 { font-size: 1.1rem; margin-bottom: 8px; }
+        .price { font-size: 1.3rem; color: #6B46C1; font-weight: bold; margin-bottom: 8px; }
+        .rating { font-size: 0.9rem; color: #666; }
+        .detail-view {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .detail-img { width: 100%; border-radius: 12px; margin-bottom: 20px; }
+        .back-btn {
+            padding: 10px 20px;
+            background: #6B46C1;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+        .get-gift-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: #10B981;
+            color: white;
+            text-decoration: none;
+            text-align: center;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        .testimonial {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        .testimonial-header { font-weight: bold; margin-bottom: 5px; }
+        .testimonial-rating { margin-bottom: 8px; }
+        @media (max-width: 768px) {
+            .gift-grid { grid-template-columns: 1fr; }
+            .filters { flex-direction: column; }
+            .hero h1 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="module">
+        import React from 'https://esm.sh/react@18';
+        import ReactDOM from 'https://esm.sh/react-dom@18/client';
+
+        const { useState, useEffect } = React;
+
+        // For demo, use static data
+        const API_BASE_URL = window.location.hostname === 'localhost'
+            ? 'http://localhost:3001'
+            : '/demo-data.json';
+
+        function App() {
+            const [gifts, setGifts] = useState([]);
+            const [selectedGift, setSelectedGift] = useState(null);
+            const [loading, setLoading] = useState(true);
+            const [error, setError] = useState(null);
+            const [filter, setFilter] = useState({
+                category: '',
+                maxPrice: 1000,
+                minSuccessRate: 0
+            });
+
+            useEffect(() => {
+                fetchGifts();
+                initializeSession();
+            }, [filter]);
+
+            const initializeSession = () => {
+                if (!localStorage.getItem('sessionId')) {
+                    const id = 'anon_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                    localStorage.setItem('sessionId', id);
+                }
+            };
+
+            const fetchGifts = async () => {
+                setLoading(true);
+                setError(null);
+                try {
+                    let data;
+                    if (window.location.hostname === 'localhost') {
+                        // Use API for localhost
+                        const params = new URLSearchParams();
+                        if (filter.category) params.append('category', filter.category);
+                        if (filter.maxPrice < 1000) params.append('maxPrice', filter.maxPrice);
+                        if (filter.minSuccessRate > 0) params.append('minSuccessRate', filter.minSuccessRate);
+
+                        const response = await fetch(`${API_BASE_URL}/api/gifts?${params}`);
+                        if (!response.ok) throw new Error('Failed to fetch gifts');
+                        data = await response.json();
+                        setGifts(data.gifts || []);
+                    } else {
+                        // Use static data for production
+                        const response = await fetch(API_BASE_URL);
+                        if (!response.ok) throw new Error('Failed to fetch gifts');
+                        data = await response.json();
+
+                        // Apply filters to static data
+                        let filteredGifts = data.gifts || [];
+                        if (filter.category) {
+                            filteredGifts = filteredGifts.filter(gift => gift.category === filter.category);
+                        }
+                        if (filter.maxPrice < 1000) {
+                            filteredGifts = filteredGifts.filter(gift => gift.price <= filter.maxPrice);
+                        }
+                        if (filter.minSuccessRate > 0) {
+                            filteredGifts = filteredGifts.filter(gift => gift.success_rate >= filter.minSuccessRate);
+                        }
+                        setGifts(filteredGifts);
+                    }
+                } catch (error) {
+                    console.error('Error fetching gifts:', error);
+                    setError('Unable to load gifts. Please try again later.');
+                    setGifts([]);
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            const fetchGiftDetails = async (id) => {
+                try {
+                    if (window.location.hostname === 'localhost') {
+                        // Use API for localhost
+                        const response = await fetch(`${API_BASE_URL}/api/gifts/${id}`);
+                        if (!response.ok) throw new Error('Failed to fetch gift details');
+                        const data = await response.json();
+                        setSelectedGift(data);
+                    } else {
+                        // Use static data for production
+                        const response = await fetch('/demo-data.json');
+                        if (!response.ok) throw new Error('Failed to fetch data');
+                        const data = await response.json();
+
+                        const gift = data.gifts.find(g => g.id === id);
+                        const testimonials = data.testimonials.filter(t => t.gift_id === id);
+
+                        setSelectedGift({
+                            ...gift,
+                            testimonials: testimonials
+                        });
+                    }
+                    trackEvent('view_gift', id);
+                } catch (error) {
+                    console.error('Error fetching gift details:', error);
+                    setError('Unable to load gift details.');
+                }
+            };
+
+            const trackEvent = async (eventType, giftId) => {
+                try {
+                    if (window.location.hostname === 'localhost') {
+                        await fetch(`${API_BASE_URL}/api/analytics/track`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                eventType,
+                                giftId,
+                                sessionId: localStorage.getItem('sessionId')
+                            })
+                        });
+                    } else {
+                        // For production, just log to console
+                        console.log('Analytics:', eventType, giftId);
+                    }
+                } catch (error) {
+                    console.error('Analytics tracking failed:', error);
+                }
+            };
+
+            const renderHearts = (rating) => {
+                if (!rating) return '';
+                const fullHearts = Math.floor(rating / 20);
+                const hearts = [];
+                for (let i = 0; i < 5; i++) {
+                    hearts.push(i < fullHearts ? '❤️' : '🤍');
+                }
+                return hearts.join('');
+            };
+
+            const handleGetGift = (gift) => {
+                trackEvent('click_buy', gift.id);
+                window.open(gift.affiliate_url, '_blank', 'noopener,noreferrer');
+            };
+
+            if (selectedGift) {
+                return React.createElement('div', { className: 'container' },
+                    React.createElement('div', { className: 'detail-view' },
+                        React.createElement('button', {
+                            className: 'back-btn',
+                            onClick: () => setSelectedGift(null)
+                        }, '← Back to Gifts'),
+
+                        React.createElement('img', {
+                            src: selectedGift.gift.image_url,
+                            alt: selectedGift.gift.title,
+                            className: 'detail-img'
+                        }),
+
+                        React.createElement('h1', { style: { marginBottom: '10px' }},
+                            selectedGift.gift.title),
+
+                        React.createElement('div', { className: 'price' },
+                            '$' + selectedGift.gift.price),
+
+                        selectedGift.gift.success_rate > 0 && React.createElement('div', {
+                            style: { marginBottom: '20px', fontSize: '1.1rem' }
+                        },
+                            renderHearts(selectedGift.gift.success_rate),
+                            ' ' + selectedGift.gift.success_rate + '% of partners loved this gift',
+                            React.createElement('span', {
+                                style: { color: '#666', marginLeft: '10px', fontSize: '0.9rem' }
+                            }, '(' + selectedGift.gift.total_reviews + ' reviews)')
+                        ),
+
+                        React.createElement('p', {
+                            style: { marginBottom: '20px', lineHeight: '1.6' }
+                        }, selectedGift.gift.description),
+
+                        React.createElement('button', {
+                            className: 'get-gift-btn',
+                            onClick: () => handleGetGift(selectedGift.gift),
+                            style: { cursor: 'pointer', border: 'none' }
+                        }, '🎁 Get This Gift'),
+
+                        React.createElement('h2', {
+                            style: { fontSize: '1.3rem', marginBottom: '20px' }
+                        }, 'What Other Men Say'),
+
+                        ...selectedGift.testimonials.map(t =>
+                            React.createElement('div', {
+                                key: t.id,
+                                className: 'testimonial'
+                            },
+                                React.createElement('div', { className: 'testimonial-header' },
+                                    t.reviewer_name + ' • ' + t.relationship_length),
+                                React.createElement('div', { className: 'testimonial-rating' },
+                                    '⭐'.repeat(t.partner_rating)),
+                                React.createElement('p', null, t.testimonial_text)
+                            )
+                        )
+                    )
+                );
+            }
+
+            return React.createElement('div', { className: 'container' },
+                React.createElement('div', { className: 'hero' },
+                    React.createElement('h1', null, '🎁 GiftGenius'),
+                    React.createElement('p', null,
+                        'Gift ideas that actually work, backed by real testimonials from men who\'ve been there')
+                ),
+
+                React.createElement('div', { className: 'filters' },
+                    React.createElement('select', {
+                        value: filter.category,
+                        onChange: (e) => setFilter({...filter, category: e.target.value})
+                    },
+                        React.createElement('option', { value: '' }, 'All Categories'),
+                        React.createElement('option', { value: 'jewelry' }, '💎 Jewelry'),
+                        React.createElement('option', { value: 'experiences' }, '🎭 Experiences'),
+                        React.createElement('option', { value: 'home' }, '🏠 Home & Living'),
+                        React.createElement('option', { value: 'fashion' }, '👗 Fashion'),
+                        React.createElement('option', { value: 'beauty' }, '💄 Beauty'),
+                        React.createElement('option', { value: 'tech' }, '📱 Tech'),
+                        React.createElement('option', { value: 'unique' }, '✨ Unique')
+                    ),
+
+                    React.createElement('select', {
+                        value: filter.maxPrice,
+                        onChange: (e) => setFilter({...filter, maxPrice: parseInt(e.target.value)})
+                    },
+                        React.createElement('option', { value: 1000 }, 'Any Price'),
+                        React.createElement('option', { value: 50 }, 'Under $50'),
+                        React.createElement('option', { value: 150 }, 'Under $150'),
+                        React.createElement('option', { value: 300 }, 'Under $300')
+                    ),
+
+                    React.createElement('select', {
+                        value: filter.minSuccessRate,
+                        onChange: (e) => setFilter({...filter, minSuccessRate: parseInt(e.target.value)})
+                    },
+                        React.createElement('option', { value: 0 }, 'Any Success Rate'),
+                        React.createElement('option', { value: 70 }, '70%+ Love It'),
+                        React.createElement('option', { value: 80 }, '80%+ Love It'),
+                        React.createElement('option', { value: 90 }, '90%+ Love It')
+                    )
+                ),
+
+                error ? React.createElement('div', {
+                    style: {
+                        padding: '20px',
+                        background: '#fee',
+                        color: '#c00',
+                        borderRadius: '8px',
+                        textAlign: 'center',
+                        margin: '20px 0'
+                    }
+                }, error) : null,
+
+                loading ? React.createElement('div', { className: 'loading' },
+                    '🎁 Loading amazing gift ideas...') :
+
+                gifts.length === 0 ? React.createElement('div', {
+                    style: { textAlign: 'center', padding: '40px', color: '#666' }
+                }, 'No gifts found. Try adjusting your filters.') :
+
+                React.createElement('div', { className: 'gift-grid' },
+                    ...gifts.map(gift =>
+                        React.createElement('div', {
+                            key: gift.id,
+                            className: 'gift-card',
+                            onClick: () => fetchGiftDetails(gift.id)
+                        },
+                            React.createElement('img', {
+                                src: gift.image_url,
+                                alt: gift.title
+                            }),
+                            React.createElement('div', { className: 'gift-card-content' },
+                                React.createElement('h3', null, gift.title),
+                                React.createElement('div', { className: 'price' },
+                                    '$' + gift.price),
+                                gift.success_rate > 0 && React.createElement('div', { className: 'rating' },
+                                    renderHearts(gift.success_rate),
+                                    React.createElement('span', { style: { marginLeft: '8px' }},
+                                        gift.success_rate + '% love it (' + gift.total_reviews + ' reviews)')
+                                )
+                            )
+                        )
+                    )
+                )
+            );
+        }
+
+        // Initialize and render the app
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(React.createElement(App));
+    </script>
+</body>
+</html>
