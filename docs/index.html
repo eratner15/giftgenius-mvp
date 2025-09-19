@@ -1484,6 +1484,12 @@
             to { opacity: 1; }
         }
 
+        @keyframes loading {
+            0% { transform: translateX(-100%); }
+            50% { transform: translateX(200%); }
+            100% { transform: translateX(300%); }
+        }
+
         .fade-in {
             animation: fadeIn 0.5s ease-out;
         }
@@ -1829,10 +1835,10 @@
             const [selectedSuggestion, setSelectedSuggestion] = useState(-1);
             const searchRef = useRef(null);
 
-            // Phase 2: Intelligence & Personalization
-            const [analytics] = useState(() => new UserAnalytics());
-            const [recommendationEngine] = useState(() => new RecommendationEngine(analytics));
-            const [socialProof] = useState(() => new SocialProofManager());
+            // Phase 2: Intelligence & Personalization (initialized lazily)
+            const [analytics, setAnalytics] = useState(null);
+            const [recommendationEngine, setRecommendationEngine] = useState(null);
+            const [socialProof, setSocialProof] = useState(null);
             const [personalizedGifts, setPersonalizedGifts] = useState([]);
             const [similarGifts, setSimilarGifts] = useState([]);
             const [contextualGifts, setContextualGifts] = useState([]);
@@ -1858,36 +1864,56 @@
                 { id: 'firstdate', emoji: '🌹', label: 'New Relationship', desc: 'Not too much', filter: { maxPrice: 50 } }
             ];
 
+            // Initialize analytics lazily after first render
             useEffect(() => {
-                analytics.trackSession();
+                if (!analytics) {
+                    const analyticsInstance = new UserAnalytics();
+                    const recommendationEngineInstance = new RecommendationEngine(analyticsInstance);
+                    const socialProofInstance = new SocialProofManager();
+
+                    setAnalytics(analyticsInstance);
+                    setRecommendationEngine(recommendationEngineInstance);
+                    setSocialProof(socialProofInstance);
+
+                    analyticsInstance.trackSession();
+                }
+            }, []);
+
+            useEffect(() => {
                 fetchGifts();
                 loadFavorites();
-
-                // Update real-time activities periodically
-                const activityInterval = setInterval(() => {
-                    if (allGifts.length > 0) {
-                        socialProof.generateRealtimeActivity(allGifts);
-                        setActivities([...socialProof.getActivities()]);
-                    }
-                }, 8000);
-
-                return () => clearInterval(activityInterval);
             }, []);
 
             useEffect(() => {
                 filterAndSortGifts();
-                updateRecommendations();
-            }, [filter, sortBy, allGifts]);
+                if (analytics && recommendationEngine && allGifts.length > 0) {
+                    updateRecommendations();
+                }
+            }, [filter, sortBy, allGifts, analytics, recommendationEngine]);
 
             useEffect(() => {
                 if (filter.search) {
                     generateSearchSuggestions(filter.search);
-                    analytics.trackSearch(filter.search, gifts);
+                    if (analytics) {
+                        analytics.trackSearch(filter.search, gifts);
+                    }
                 } else {
                     setSearchSuggestions([]);
                     setShowSuggestions(false);
                 }
-            }, [filter.search, allGifts]);
+            }, [filter.search, allGifts, analytics]);
+
+            // Start activity updates only after everything is loaded
+            useEffect(() => {
+                if (socialProof && allGifts.length > 0) {
+                    const activityInterval = setInterval(() => {
+                        socialProof.generateRealtimeActivity(allGifts);
+                        setActivities([...socialProof.getActivities()]);
+                    }, 8000);
+
+                    return () => clearInterval(activityInterval);
+                }
+            }, [socialProof, allGifts]);
 
             const updateRecommendations = () => {
                 if (allGifts.length === 0) return;
@@ -2052,30 +2078,90 @@
             const fetchGifts = async () => {
                 setLoading(true);
                 setError(null);
-                try {
-                    const response = await fetch(DATA_URL);
-                    if (!response.ok) throw new Error('Failed to fetch gifts');
-                    const data = await response.json();
 
-                    const giftsData = data.gifts || [];
+                try {
+                    console.log('Fetching gifts from:', DATA_URL);
+
+                    // Add timeout to prevent hanging
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
+                    const response = await fetch(DATA_URL, {
+                        signal: controller.signal,
+                        cache: 'no-cache'
+                    });
+
+                    clearTimeout(timeoutId);
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+
+                    const data = await response.json();
+                    console.log('Data loaded:', data);
+
+                    const giftsData = data.gifts || data || [];
+
+                    if (!Array.isArray(giftsData) || giftsData.length === 0) {
+                        throw new Error('No gifts data found');
+                    }
+
                     setAllGifts(giftsData);
                     setGifts(giftsData);
 
-                    // Generate initial social proof
-                    socialProof.generateRealtimeActivity(giftsData);
-                    setActivities([...socialProof.getActivities()]);
+                    // Generate initial social proof only if socialProof is available
+                    if (socialProof) {
+                        socialProof.generateRealtimeActivity(giftsData);
+                        setActivities([...socialProof.getActivities()]);
+                    }
 
                     showToast(
                         'Gifts Loaded!',
                         `Found ${giftsData.length} amazing gifts for you`,
                         'success'
                     );
+
+                    console.log('Successfully loaded', giftsData.length, 'gifts');
+
                 } catch (error) {
-                    setError(error.message);
+                    console.error('Error fetching gifts:', error);
+
+                    // Fallback to sample data if fetch fails
+                    const fallbackGifts = [
+                        {
+                            id: 1,
+                            name: "Sample Gift 1",
+                            title: "Sample Gift 1",
+                            price: 50,
+                            category: "jewelry",
+                            successRate: 95,
+                            image: "/api/placeholder/300/200",
+                            testimonials: [
+                                { text: "Great gift!", reviewer: "John", relationship: "Boyfriend" }
+                            ]
+                        },
+                        {
+                            id: 2,
+                            name: "Sample Gift 2",
+                            title: "Sample Gift 2",
+                            price: 75,
+                            category: "experiences",
+                            successRate: 90,
+                            image: "/api/placeholder/300/200",
+                            testimonials: [
+                                { text: "She loved it!", reviewer: "Mike", relationship: "Husband" }
+                            ]
+                        }
+                    ];
+
+                    setAllGifts(fallbackGifts);
+                    setGifts(fallbackGifts);
+
+                    setError(`Loading error: ${error.message}. Using sample data.`);
                     showToast(
-                        'Error Loading Gifts',
-                        'Please check your connection and try again',
-                        'error'
+                        'Loading Issue',
+                        'Using sample data. Please refresh to try again.',
+                        'warning'
                     );
                 } finally {
                     setLoading(false);
@@ -2216,7 +2302,65 @@
             if (loading) {
                 return (
                     <div className="app-container">
+                        {/* Hero Section */}
+                        <section className="hero">
+                            <div className="container">
+                                <h1>🎁 GiftGenius</h1>
+                                <p>Find the perfect gift backed by real testimonials from men who got it right</p>
+                                <div className="trust-indicators">
+                                    <div className="trust-indicator">
+                                        <span>⭐</span>
+                                        <span>96% Success Rate</span>
+                                    </div>
+                                    <div className="trust-indicator">
+                                        <span>❤️</span>
+                                        <span>1,200+ Happy Partners</span>
+                                    </div>
+                                    <div className="trust-indicator">
+                                        <span>🏆</span>
+                                        <span>Expert Curated</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
                         <div className="container">
+                            <div style={{
+                                textAlign: 'center',
+                                padding: '40px 20px',
+                                background: 'var(--gray-50)',
+                                borderRadius: '16px',
+                                marginBottom: '30px'
+                            }}>
+                                <div style={{
+                                    fontSize: '3rem',
+                                    marginBottom: '20px',
+                                    animation: 'pulse 2s infinite'
+                                }}>🎁</div>
+                                <h2 style={{ color: 'var(--primary)', marginBottom: '10px' }}>
+                                    Loading Amazing Gifts...
+                                </h2>
+                                <p style={{ color: 'var(--gray-600)' }}>
+                                    Curating the perfect selection for you
+                                </p>
+                                <div style={{
+                                    width: '200px',
+                                    height: '4px',
+                                    background: 'var(--gray-200)',
+                                    borderRadius: '2px',
+                                    margin: '20px auto',
+                                    overflow: 'hidden'
+                                }}>
+                                    <div style={{
+                                        width: '50%',
+                                        height: '100%',
+                                        background: 'linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%)',
+                                        borderRadius: '2px',
+                                        animation: 'loading 2s ease-in-out infinite'
+                                    }}></div>
+                                </div>
+                            </div>
+
                             <div className="gift-grid">
                                 {[1, 2, 3, 4, 5, 6].map(i => (
                                     <div key={i} className="skeleton-card">
@@ -2230,6 +2374,14 @@
                                 ))}
                             </div>
                         </div>
+
+                        <style jsx>{`
+                            @keyframes loading {
+                                0% { transform: translateX(-100%); }
+                                50% { transform: translateX(200%); }
+                                100% { transform: translateX(300%); }
+                            }
+                        `}</style>
                     </div>
                 );
             }
