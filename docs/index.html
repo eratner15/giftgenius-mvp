@@ -2135,7 +2135,7 @@
                             price: 50,
                             category: "jewelry",
                             successRate: 95,
-                            image: "/api/placeholder/300/200",
+                            image: "https://via.placeholder.com/300x200/6B46C1/FFFFFF?text=Gift",
                             testimonials: [
                                 { text: "Great gift!", reviewer: "John", relationship: "Boyfriend" }
                             ]
@@ -2147,7 +2147,7 @@
                             price: 75,
                             category: "experiences",
                             successRate: 90,
-                            image: "/api/placeholder/300/200",
+                            image: "https://via.placeholder.com/300x200/6B46C1/FFFFFF?text=Gift",
                             testimonials: [
                                 { text: "She loved it!", reviewer: "Mike", relationship: "Husband" }
                             ]
@@ -2722,7 +2722,7 @@
                                         >
                                             <div style={{ position: 'relative' }}>
                                                 <img
-                                                    src={gift.image || '/api/placeholder/300/200'}
+                                                    src={gift.image || 'https://via.placeholder.com/300x200/6B46C1/FFFFFF?text=Gift'}
                                                     alt={gift.name || gift.title}
                                                     loading="lazy"
                                                 />
@@ -2777,7 +2777,7 @@
                                 </button>
                                 <div className="detail-content">
                                     <div className="detail-image">
-                                        <img src={selectedGift.image || '/api/placeholder/400/300'} alt={selectedGift.name || selectedGift.title} />
+                                        <img src={selectedGift.image || 'https://via.placeholder.com/400x300/6B46C1/FFFFFF?text=Gift'} alt={selectedGift.name || selectedGift.title} />
                                     </div>
                                     <div className="detail-info">
                                         <h2>{selectedGift.name || selectedGift.title}</h2>
