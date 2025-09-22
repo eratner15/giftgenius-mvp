@@ -209,8 +209,8 @@ function runStatement(sql, params = []) {
   });
 }
 
-// API Routes - add /api prefix to match frontend requests
-app.get('/api/health', async (req, res) => {
+// API Routes - Netlify strips /api prefix, so we use the paths directly
+app.get('/health', async (req, res) => {
   try {
     await initializeDatabase();
     await runQuery('SELECT 1');
@@ -229,7 +229,7 @@ app.get('/api/health', async (req, res) => {
   }
 });
 
-app.get('/api/gifts', async (req, res) => {
+app.get('/gifts', async (req, res) => {
   try {
     await initializeDatabase();
 
@@ -303,7 +303,7 @@ app.get('/api/gifts', async (req, res) => {
   }
 });
 
-app.get('/api/categories', async (req, res) => {
+app.get('/categories', async (req, res) => {
   try {
     await initializeDatabase();
 
@@ -324,7 +324,7 @@ app.get('/api/categories', async (req, res) => {
   }
 });
 
-app.post('/api/analytics/track', async (req, res) => {
+app.post('/analytics/track', async (req, res) => {
   try {
     await initializeDatabase();
 
