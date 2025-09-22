@@ -5,6 +5,8 @@ import Hero from './components/Hero';
 import FilterBar from './components/FilterBar';
 import GiftGrid from './components/GiftGrid';
 import TestimonialModal from './components/TestimonialModal';
+import LoadingSpinner from './components/LoadingSpinner';
+import ErrorMessage from './components/ErrorMessage';
 import { getGifts } from './api/gifts';
 import { UserAnalytics, RecommendationEngine, SocialProofManager } from './utils/analytics';
 import { useToast } from './utils/toast';
@@ -586,15 +588,26 @@ function App() {
           handleQuickFilter={handleQuickFilter}
         />
 
-        <GiftGrid
-          gifts={gifts}
-          loading={loading}
-          onGiftClick={handleGiftClick}
-          sortBy={sortBy}
-          setSortBy={setSortBy}
-          analytics={analytics}
-          recommendationEngine={recommendationEngine}
-        />
+        {loading ? (
+          <LoadingSpinner size="large" message="Finding the perfect gifts for you..." />
+        ) : error ? (
+          <ErrorMessage
+            title="Oops! Something went wrong"
+            message={error}
+            onRetry={fetchGiftsData}
+            actionLabel="Reload Gifts"
+          />
+        ) : (
+          <GiftGrid
+            gifts={gifts}
+            loading={loading}
+            onGiftClick={handleGiftClick}
+            sortBy={sortBy}
+            setSortBy={setSortBy}
+            analytics={analytics}
+            recommendationEngine={recommendationEngine}
+          />
+        )}
 
         {selectedGift && (
           <TestimonialModal
