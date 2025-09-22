@@ -3,9 +3,30 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#FF69B4" />
+    <meta name="theme-color" content="#6B46C1" />
     <meta name="description" content="GiftGenius - Find the perfect gift backed by real testimonials from men" />
     <title>GiftGenius - Gift Ideas That Actually Work</title>
+
+    <!-- PWA Configuration -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="GiftGenius" />
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🎁%3C/text%3E%3C/svg%3E" />
+
+    <!-- Additional Meta Tags -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="GiftGenius" />
+    <meta name="msapplication-TileColor" content="#6B46C1" />
+    <meta name="msapplication-tap-highlight" content="no" />
+
+    <!-- Preload critical resources -->
+    <link rel="preload" href="/static/css/main.45a7795f.css" as="style" />
+    <link rel="preload" href="/static/js/main.31aa3cba.js" as="script" />
+
+    <!-- Performance optimizations -->
+    <link rel="dns-prefetch" href="//images.unsplash.com" />
+    <link rel="preconnect" href="//images.unsplash.com" crossorigin />
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -2897,6 +2918,110 @@
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
+
+        // Register Service Worker for PWA functionality
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('SW registered: ', registration);
+
+                        // Check for updates
+                        registration.addEventListener('updatefound', () => {
+                            const newWorker = registration.installing;
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    // Show update notification
+                                    showUpdateNotification();
+                                }
+                            });
+                        });
+                    })
+                    .catch(registrationError => {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
+
+        // PWA Install Prompt
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Prevent the mini-infobar from appearing
+            e.preventDefault();
+            deferredPrompt = e;
+
+            // Show custom install button after user interaction
+            setTimeout(() => {
+                showInstallPrompt();
+            }, 30000); // Show after 30 seconds
+        });
+
+        function showInstallPrompt() {
+            if (!deferredPrompt) return;
+
+            const installBanner = document.createElement('div');
+            installBanner.style.cssText = `
+                position: fixed; bottom: 20px; left: 20px; right: 20px; z-index: 10000;
+                background: linear-gradient(135deg, #6B46C1, #8B5CF6); color: white;
+                padding: 16px 20px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+                display: flex; align-items: center; justify-content: space-between; animation: slideUp 0.3s ease;
+            `;
+            installBanner.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span style="font-size: 24px;">📱</span>
+                    <div>
+                        <div style="font-weight: 600; margin-bottom: 4px;">Install GiftGenius</div>
+                        <div style="font-size: 14px; opacity: 0.9;">Quick access to perfect gifts anytime</div>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <button id="installBtn" style="padding: 8px 16px; background: rgba(255,255,255,0.2); border: none; border-radius: 8px; color: white; cursor: pointer; font-weight: 500;">Install</button>
+                    <button id="dismissBtn" style="padding: 8px 12px; background: none; border: none; color: white; cursor: pointer; font-size: 18px;">✕</button>
+                </div>
+            `;
+
+            document.body.appendChild(installBanner);
+
+            document.getElementById('installBtn').addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    console.log(`User response to install prompt: ${outcome}`);
+                    deferredPrompt = null;
+                }
+                installBanner.remove();
+            });
+
+            document.getElementById('dismissBtn').addEventListener('click', () => {
+                installBanner.remove();
+                deferredPrompt = null;
+            });
+        }
+
+        function showUpdateNotification() {
+            const updateBanner = document.createElement('div');
+            updateBanner.style.cssText = `
+                position: fixed; top: 20px; left: 20px; right: 20px; z-index: 10000;
+                background: #10B981; color: white; padding: 12px 16px; border-radius: 8px;
+                display: flex; align-items: center; justify-content: space-between;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.2); animation: slideDown 0.3s ease;
+            `;
+            updateBanner.innerHTML = `
+                <span>🎉 New features available! Refresh to update.</span>
+                <button onclick="window.location.reload()" style="padding: 4px 12px; background: rgba(255,255,255,0.2); border: none; border-radius: 4px; color: white; cursor: pointer;">Refresh</button>
+            `;
+            document.body.appendChild(updateBanner);
+
+            setTimeout(() => updateBanner.remove(), 10000);
+        }
+
+        // Add animation keyframes
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+            @keyframes slideDown { from { transform: translateY(-100%); } to { transform: translateY(0); } }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 </html>
