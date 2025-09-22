@@ -2,18 +2,34 @@
   "version": 2,
   "builds": [
     {
-      "src": "backend/server-production.js",
+      "src": "frontend/build/**",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "api/index.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/backend/server-production.js"
+      "dest": "/api/index.js"
+    },
+    {
+      "src": "/static/(.*)",
+      "dest": "/frontend/build/static/$1"
+    },
+    {
+      "src": "/manifest.json",
+      "dest": "/frontend/build/manifest.json"
+    },
+    {
+      "src": "/sw.js",
+      "dest": "/frontend/build/sw.js"
     },
     {
       "src": "/(.*)",
-      "dest": "/backend/server-production.js"
+      "dest": "/frontend/build/index.html"
     }
   ]
 }
