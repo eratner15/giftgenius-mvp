@@ -1,0 +1,45 @@
+{
+  "name": "giftgenius-mvp",
+  "version": "1.0.0",
+  "description": "GiftGenius - Gift Ideas That Actually Work",
+  "scripts": {
+    "install:all": "npm run install:backend && npm run install:frontend",
+    "install:backend": "cd backend && npm install",
+    "install:frontend": "cd frontend && npm install",
+    "build": "npm run build:frontend",
+    "build:frontend": "cd frontend && npm run build",
+    "start": "NODE_ENV=production node backend/server-production.js",
+    "start:dev": "concurrently \"npm run backend:dev\" \"npm run frontend:dev\"",
+    "backend:dev": "cd backend && npm run dev",
+    "frontend:dev": "cd frontend && npm start",
+    "setup:db": "cd backend && node database/setup-sqlite.js",
+    "test": "npm run test:backend && npm run test:frontend",
+    "test:backend": "cd backend && npm test",
+    "test:frontend": "cd frontend && npm test",
+    "postinstall": "npm run install:all && npm run build"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=7.0.0"
+  },
+  "devDependencies": {
+    "concurrently": "^7.6.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eratner15/giftgenius-mvp.git"
+  },
+  "keywords": [
+    "gift",
+    "recommendations",
+    "react",
+    "node",
+    "express"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/eratner15/giftgenius-mvp/issues"
+  },
+  "homepage": "https://github.com/eratner15/giftgenius-mvp#readme"
+}

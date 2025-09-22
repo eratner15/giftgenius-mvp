@@ -4,10 +4,6 @@
     {
       "src": "backend/server-production.js",
       "use": "@vercel/node"
-    },
-    {
-      "src": "frontend/public/**",
-      "use": "@vercel/static"
     }
   ],
   "routes": [
@@ -17,6 +13,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "/frontend/public/index.html"    }
+      "dest": "/backend/server-production.js"
+    }
   ]
 }

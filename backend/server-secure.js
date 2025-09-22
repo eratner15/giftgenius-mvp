@@ -5,7 +5,6 @@ const compression = require('compression');
 const rateLimit = require('express-rate-limit');
 const { body, query, param, validationResult } = require('express-validator');
 const sqlite3 = require('sqlite3').verbose();
-const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
 
@@ -136,6 +135,8 @@ async function setupDatabase() {
       db.run(`CREATE INDEX idx_gifts_price ON gifts(price)`);
       db.run(`CREATE INDEX idx_gifts_success_rate ON gifts(success_rate)`);
       db.run(`CREATE INDEX idx_testimonials_gift_id ON testimonials(gift_id)`);
+      db.run(`CREATE INDEX idx_analytics_event_type ON analytics(event_type)`);
+      db.run(`CREATE INDEX idx_analytics_created_at ON analytics(created_at)`);
 
       // Insert gifts
       const giftStmt = db.prepare(`
@@ -215,17 +216,32 @@ app.use(cors({
       callback(new Error('Not allowed by CORS'));
     }
   },
-  credentials: true
+  credentials: true,
+  maxAge: 86400 // Cache preflight requests for 24 hours
 }));
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Request logging middleware
-app.use((req, res, next) => {
-  console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
+// Request logging middleware (only in development)
+if (process.env.NODE_ENV !== 'production') {
+  app.use((req, res, next) => {
+    console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
+    next();
+  });
+}
+
+// Validation middleware
+const handleValidationErrors = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({
+      error: 'Validation failed',
+      details: errors.array()
+    });
+  }
   next();
-});
+};
 
 // Helper functions
 function generateSessionId() {
@@ -250,6 +266,12 @@ function runStatement(sql, params = []) {
   });
 }
 
+// Sanitize input helper
+function sanitizeInput(input) {
+  if (typeof input !== 'string') return input;
+  return input.replace(/[<>]/g, '');
+}
+
 // API Routes
 app.get('/api/health', async (req, res) => {
   try {
@@ -260,18 +282,30 @@ app.get('/api/health', async (req, res) => {
       status: 'healthy',
       timestamp: new Date().toISOString(),
       environment: process.env.NODE_ENV || 'development',
-      database: db ? 'connected' : 'disconnected'
+      database: db ? 'connected' : 'disconnected',
+      version: '1.0.0'
     });
   } catch (err) {
     res.status(500).json({
       status: 'unhealthy',
-      error: err.message,
+      error: process.env.NODE_ENV === 'development' ? err.message : 'Database connection failed',
       timestamp: new Date().toISOString()
     });
   }
 });
 
-app.get('/api/gifts', async (req, res) => {
+app.get('/api/gifts', [
+  query('category').optional().isString().trim(),
+  query('minPrice').optional().isFloat({ min: 0 }),
+  query('maxPrice').optional().isFloat({ min: 0 }),
+  query('occasion').optional().isString().trim(),
+  query('relationshipStage').optional().isString().trim(),
+  query('minSuccessRate').optional().isInt({ min: 0, max: 100 }),
+  query('sortBy').optional().isIn(['success_rate', 'price_low', 'price_high', 'newest', 'popular']),
+  query('limit').optional().isInt({ min: 1, max: 100 }),
+  query('offset').optional().isInt({ min: 0 }),
+  handleValidationErrors
+], async (req, res) => {
   try {
     const {
       category,
@@ -290,27 +324,27 @@ app.get('/api/gifts', async (req, res) => {
 
     if (category) {
       query += ' AND category = ?';
-      params.push(category);
+      params.push(sanitizeInput(category));
     }
     if (minPrice) {
       query += ' AND price >= ?';
-      params.push(minPrice);
+      params.push(parseFloat(minPrice));
     }
     if (maxPrice) {
       query += ' AND price <= ?';
-      params.push(maxPrice);
+      params.push(parseFloat(maxPrice));
     }
     if (occasion) {
       query += ' AND occasion = ?';
-      params.push(occasion);
+      params.push(sanitizeInput(occasion));
     }
     if (relationshipStage) {
       query += ' AND relationship_stage = ?';
-      params.push(relationshipStage);
+      params.push(sanitizeInput(relationshipStage));
     }
     if (minSuccessRate) {
       query += ' AND success_rate >= ?';
-      params.push(minSuccessRate);
+      params.push(parseInt(minSuccessRate));
     }
 
     const sortOptions = {
@@ -339,11 +373,17 @@ app.get('/api/gifts', async (req, res) => {
     });
   } catch (err) {
     console.error('Error fetching gifts:', err);
-    res.status(500).json({ error: 'Server error fetching gifts' });
+    res.status(500).json({
+      error: 'Server error fetching gifts',
+      message: process.env.NODE_ENV === 'development' ? err.message : undefined
+    });
   }
 });
 
-app.get('/api/gifts/:id', async (req, res) => {
+app.get('/api/gifts/:id', [
+  param('id').isInt({ min: 1 }),
+  handleValidationErrors
+], async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -377,7 +417,10 @@ app.get('/api/gifts/:id', async (req, res) => {
     });
   } catch (err) {
     console.error('Error fetching gift details:', err);
-    res.status(500).json({ error: 'Server error fetching gift details' });
+    res.status(500).json({
+      error: 'Server error fetching gift details',
+      message: process.env.NODE_ENV === 'development' ? err.message : undefined
+    });
   }
 });
 
@@ -416,13 +459,26 @@ app.get('/api/categories', async (req, res) => {
     res.json(categoriesWithInfo);
   } catch (err) {
     console.error('Error fetching categories:', err);
-    res.status(500).json({ error: 'Server error fetching categories' });
+    res.status(500).json({
+      error: 'Server error fetching categories',
+      message: process.env.NODE_ENV === 'development' ? err.message : undefined
+    });
   }
 });
 
-app.post('/api/analytics/track', async (req, res) => {
+app.post('/api/analytics/track', [
+  body('eventType').isString().trim().isLength({ min: 1, max: 100 }),
+  body('giftId').optional().isInt({ min: 1 }),
+  body('sessionId').optional().isString().trim().isLength({ max: 100 }),
+  body('metadata').optional().isObject(),
+  handleValidationErrors
+], async (req, res) => {
   try {
     const { eventType, giftId, sessionId, metadata } = req.body;
+
+    // Sanitize input
+    const sanitizedEventType = sanitizeInput(eventType);
+    const sanitizedSessionId = sessionId ? sanitizeInput(sessionId) : generateSessionId();
 
     const query = `
       INSERT INTO analytics (event_type, gift_id, session_id, metadata)
@@ -430,22 +486,40 @@ app.post('/api/analytics/track', async (req, res) => {
     `;
 
     const result = await runStatement(query, [
-      eventType,
+      sanitizedEventType,
       giftId || null,
-      sessionId || generateSessionId(),
+      sanitizedSessionId,
       JSON.stringify(metadata || {})
     ]);
 
-    res.json({ success: true, id: result.id });
+    res.json({
+      success: true,
+      id: result.id,
+      sessionId: sanitizedSessionId
+    });
   } catch (err) {
     console.error('Error tracking analytics:', err);
-    res.status(500).json({ error: 'Server error tracking analytics' });
+    res.status(500).json({
+      error: 'Server error tracking analytics',
+      message: process.env.NODE_ENV === 'development' ? err.message : undefined
+    });
   }
+});
+
+// 404 handler for API routes
+app.use('/api', (req, res) => {
+  res.status(404).json({ error: 'API endpoint not found' });
 });
 
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error('Error:', err.stack);
+
+  // Handle CORS errors
+  if (err.message === 'Not allowed by CORS') {
+    return res.status(403).json({ error: 'CORS policy violation' });
+  }
+
   res.status(500).json({
     error: 'Something went wrong!',
     message: process.env.NODE_ENV === 'development' ? err.message : undefined
@@ -457,12 +531,21 @@ if (process.env.NODE_ENV === 'production') {
   // Serve static files from the React app
   const frontendBuildPath = path.join(__dirname, '..', 'frontend', 'build');
 
-  app.use(express.static(frontendBuildPath));
+  app.use(express.static(frontendBuildPath, {
+    maxAge: '1d',
+    setHeaders: (res, path) => {
+      if (path.endsWith('.html')) {
+        res.setHeader('Cache-Control', 'no-cache');
+      }
+    }
+  }));
 
   // The "catchall" handler: for any request that doesn't
   // match one above, send back React's index.html file.
   app.get('*', (req, res) => {
-    res.sendFile(path.join(frontendBuildPath, 'index.html'));
+    if (!req.path.startsWith('/api')) {
+      res.sendFile(path.join(frontendBuildPath, 'index.html'));
+    }
   });
 } else {
   // In development, just return a message for the root
@@ -470,7 +553,12 @@ if (process.env.NODE_ENV === 'production') {
     res.json({
       message: 'GiftGenius Backend API',
       environment: 'development',
-      health: '/api/health'
+      endpoints: {
+        health: '/api/health',
+        gifts: '/api/gifts',
+        categories: '/api/categories',
+        analytics: '/api/analytics/track'
+      }
     });
   });
 }
@@ -478,9 +566,10 @@ if (process.env.NODE_ENV === 'production') {
 // Start server after database initialization
 initializeDatabase().then(() => {
   const server = app.listen(PORT, '0.0.0.0', () => {
-    console.log(`🎁 GiftGenius Backend running on port ${PORT}`);
+    console.log(`🎁 GiftGenius Backend (Secure) running on port ${PORT}`);
     console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
     console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`🔒 Security: Helmet, CORS, Rate limiting enabled`);
     if (process.env.NODE_ENV === 'production') {
       console.log(`🚀 Serving React app from /frontend/build`);
     }
@@ -489,6 +578,25 @@ initializeDatabase().then(() => {
   // Graceful shutdown
   process.on('SIGTERM', () => {
     console.log('SIGTERM signal received: closing HTTP server');
+    server.close(() => {
+      console.log('HTTP server closed');
+      if (db) {
+        db.close((err) => {
+          if (err) {
+            console.error('Error closing database:', err);
+          } else {
+            console.log('Database connection closed');
+          }
+          process.exit(0);
+        });
+      } else {
+        process.exit(0);
+      }
+    });
+  });
+
+  process.on('SIGINT', () => {
+    console.log('SIGINT signal received: closing HTTP server');
     server.close(() => {
       console.log('HTTP server closed');
       if (db) {
