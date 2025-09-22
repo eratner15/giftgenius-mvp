@@ -41,5 +41,8 @@
   "bugs": {
     "url": "https://github.com/eratner15/giftgenius-mvp/issues"
   },
-  "homepage": "https://github.com/eratner15/giftgenius-mvp#readme"
+  "homepage": "https://github.com/eratner15/giftgenius-mvp#readme",
+  "dependencies": {
+    "serverless-http": "^4.0.0"
+  }
 }

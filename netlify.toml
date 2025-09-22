@@ -1,0 +1,49 @@
+[build]
+  # Since we have pre-built files in the root, skip the build process
+  publish = "."
+  command = "echo 'Using pre-built files'"
+
+[build.environment]
+  NODE_VERSION = "18"
+
+[[redirects]]
+  # API redirects to serverless functions
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+
+[[redirects]]
+  # SPA redirect - serve index.html for all routes
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  conditions = {Role = ["guest"]}
+
+[functions]
+  # Configure the serverless function
+  directory = "netlify/functions"
+
+[[headers]]
+  for = "/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000"
+
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000"
+
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/manifest.json"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
