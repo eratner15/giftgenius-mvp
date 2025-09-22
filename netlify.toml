@@ -1,7 +1,8 @@
 [build]
-  # Since we have pre-built files in the root, skip the build process
+  # Use pre-built React files - no build needed
   publish = "."
-  command = "echo 'Using pre-built files'"
+  command = "echo 'Deployment using pre-built React files - no build required'"
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF frontend/"
 
 [build.environment]
   NODE_VERSION = "18"

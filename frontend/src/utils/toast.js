@@ -1,4 +1,5 @@
 // Toast System
+// eslint-disable-next-line no-unused-vars
 let toastIdCounter = 0;
 
 // Create toast container if it doesn't exist
