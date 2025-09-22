@@ -68,49 +68,46 @@ class ApiService {
     } catch (error) {
       console.warn('API unavailable, using fallback data:', error.message);
 
-      // Try to load from local JSON file
-      try {
-        const response = await fetch('./full-data.json');
-        if (!response.ok) {
-          throw new Error('Failed to load fallback data');
-        }
-        const data = await response.json();
+      // Import and use sample data
+      const { getSampleGifts } = await import('../data/sampleGifts');
+      const data = getSampleGifts();
 
-        // Apply client-side filtering if needed
-        let filteredGifts = data.gifts || data || [];
+      // Apply client-side filtering if needed
+      let filteredGifts = data.gifts || [];
 
-        if (filters.category) {
-          filteredGifts = filteredGifts.filter(gift =>
-            gift.category === filters.category
-          );
-        }
-
-        if (filters.maxPrice) {
-          filteredGifts = filteredGifts.filter(gift =>
-            gift.price <= filters.maxPrice
-          );
-        }
-
-        if (filters.minSuccessRate) {
-          filteredGifts = filteredGifts.filter(gift =>
-            (gift.successRate || 0) >= filters.minSuccessRate
-          );
-        }
-
-        if (filters.search) {
-          const searchTerm = filters.search.toLowerCase();
-          filteredGifts = filteredGifts.filter(gift =>
-            (gift.name || gift.title || '').toLowerCase().includes(searchTerm) ||
-            (gift.category || '').toLowerCase().includes(searchTerm) ||
-            (gift.description || '').toLowerCase().includes(searchTerm)
-          );
-        }
-
-        return { gifts: filteredGifts };
-      } catch (fallbackError) {
-        console.error('Failed to load fallback data:', fallbackError);
-        throw new Error('Unable to load gift data');
+      if (filters.category) {
+        filteredGifts = filteredGifts.filter(gift =>
+          gift.category === filters.category
+        );
       }
+
+      if (filters.maxPrice) {
+        filteredGifts = filteredGifts.filter(gift =>
+          gift.price <= filters.maxPrice
+        );
+      }
+
+      if (filters.minSuccessRate) {
+        filteredGifts = filteredGifts.filter(gift =>
+          (gift.successRate || 0) >= filters.minSuccessRate
+        );
+      }
+
+      if (filters.search) {
+        const searchTerm = filters.search.toLowerCase();
+        filteredGifts = filteredGifts.filter(gift =>
+          (gift.name || gift.title || '').toLowerCase().includes(searchTerm) ||
+          (gift.category || '').toLowerCase().includes(searchTerm) ||
+          (gift.description || '').toLowerCase().includes(searchTerm)
+        );
+      }
+
+      return {
+        gifts: filteredGifts,
+        total: filteredGifts.length,
+        page: 1,
+        totalPages: 1
+      };
     }
   }
 }
