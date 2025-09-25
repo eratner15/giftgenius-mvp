@@ -1,383 +1,282 @@
-// Vercel-compatible API handler
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const compression = require('compression');
-const rateLimit = require('express-rate-limit');
-const { body, query, param, validationResult } = require('express-validator');
 const sqlite3 = require('sqlite3').verbose();
-const path = require('path');
 
 const app = express();
 
-// Basic security middleware
 app.use(helmet({
   contentSecurityPolicy: false,
   crossOriginEmbedderPolicy: false
 }));
-
 app.use(compression());
-
-// Rate limiting (disabled for testing)
-// const limiter = rateLimit({
-//   windowMs: 15 * 60 * 1000,
-//   max: 100,
-//   message: 'Too many requests from this IP, please try again later.'
-// });
-// app.use('/api/', limiter);
-
-// CORS configuration - allow all origins for now
 app.use(cors({
   origin: true,
   credentials: true
 }));
-
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
-// Database setup for Vercel
 let db;
 
+/**
+ * Initialize the SQLite database and populate with sample data if empty.
+ */
 function initializeDatabase() {
-  if (db) return Promise.resolve();
+  if (db) {
+    return;
+  }
+  db = new sqlite3.Database('/tmp/giftgenius.db', sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE);
 
-  return new Promise((resolve, reject) => {
-    const dbPath = '/tmp/giftgenius.db';
-    db = new sqlite3.Database(dbPath, (err) => {
+  db.serialize(() => {
+    db.run(`
+      CREATE TABLE IF NOT EXISTS gifts (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        description TEXT,
+        price REAL NOT NULL,
+        category TEXT NOT NULL,
+        occasion TEXT NOT NULL,
+        relationship_stage TEXT,
+        min_age INTEGER DEFAULT 18,
+        max_age INTEGER DEFAULT 99,
+        image_url TEXT,
+        affiliate_url TEXT NOT NULL,
+        retailer TEXT,
+        delivery_days INTEGER,
+        success_rate INTEGER DEFAULT 0,
+        total_reviews INTEGER DEFAULT 0,
+        is_active INTEGER DEFAULT 1,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // Insert sample data if table is empty
+    db.get('SELECT COUNT(*) AS count FROM gifts', (err, row) => {
       if (err) {
-        console.error('Error opening database:', err);
-        reject(err);
+        console.error('Error counting gifts:', err);
         return;
       }
+      if (row.count === 0) {
+        const sampleGifts = [
+          {
+            title: 'Wireless Earbuds',
+            description: 'High-quality earbuds with noise cancellation.',
+            price: 99.99,
+            category: 'tech',
+            occasion: 'birthday',
+            relationship_stage: 'dating',
+            min_age: 16,
+            max_age: 60,
+            image_url: '',
+            affiliate_url: 'https://example.com/wireless-earbuds',
+            retailer: 'ExampleStore',
+            delivery_days: 3,
+            success_rate: 85,
+            total_reviews: 150
+          },
+          {
+            title: 'Spa Gift Card',
+            description: 'Relaxing spa experience for two.',
+            price: 150.00,
+            category: 'experiences',
+            occasion: 'anniversary',
+            relationship_stage: 'married',
+            min_age: 21,
+            max_age: 65,
+            image_url: '',
+            affiliate_url: 'https://example.com/spa-gift-card',
+            retailer: 'ExampleSpa',
+            delivery_days: 0,
+            success_rate: 90,
+            total_reviews: 200
+          },
+          {
+            title: 'Gourmet Chocolate Box',
+            description: 'Artisan chocolates in assorted flavors.',
+            price: 35.00,
+            category: 'unique',
+            occasion: 'thank you',
+            relationship_stage: null,
+            min_age: 5,
+            max_age: 99,
+            image_url: '',
+            affiliate_url: 'https://example.com/gourmet-chocolate',
+            retailer: 'ExampleChocolates',
+            delivery_days: 2,
+            success_rate: 95,
+            total_reviews: 300
+          }
+        ];
 
-      console.log('Connected to SQLite database');
-
-      // Check if tables exist
-      db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='gifts'", async (err, row) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-
-        if (!row) {
-          console.log('Setting up database for first time...');
-          await setupDatabase();
-        }
-
-        resolve();
-      });
-    });
-  });
-}
-
-async function setupDatabase() {
-  db.run(`
-  CREATE TABLE gifts (
-    id INTEGER PRIMARY KEY,
-    title TEXT NOT NULL,
-    description TEXT,
-    price REAL NOT NULL,
-    category TEXT NOT NULL,
-    occasion TEXT NOT NULL,
-    relationship_stage TEXT,
-    min_age INTEGER DEFAULT 18,
-    max_age INTEGER DEFAULT 99,
-    image_url TEXT,
-    affiliate_url TEXT NOT NULL,
-    retailer TEXT,
-    delivery_days INTEGER,
-    success_rate INTEGER DEFAULT 0,
-    total_reviews INTEGER DEFAULT 0,
-    is_active INTEGER DEFAULT 1,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-  )
-`);
-  const sampleGifts = [
-    {
-      id: 1,
-      title: "Luxury Silk Pillowcase Set",
-      description: "Mulberry silk pillowcases for better sleep and skincare",
-      price: 129.99,
-      category: "home",
-      occasion: "christmas",
-      relationship_stage: "serious",
-      image_url: "https://images.unsplash.com/photo-1587222318667-31212ce2828d",
-      affiliate_url: "https://www.brooklinen.com/silk-pillowcase?source=affiliate",
-      retailer: "Brooklinen",
-      delivery_days: 2,
-      success_rate: 100,
-      total_reviews: 4
-    },
-    {
-      id: 2,
-      title: "Private Cooking Class for Two",
-      description: "Learn to cook a 5-course Italian meal with professional chef",
-      price: 189.99,
-      category: "experiences",
-      occasion: "anniversary",
-      relationship_stage: "serious",
-      image_url: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136",
-      affiliate_url: "https://www.masterclass.com/cooking-couples?ref=giftgenius",
-      retailer: "MasterClass",
-      delivery_days: 0,
-      success_rate: 100,
-      total_reviews: 4
-    }
-  ];
-
-  const sampleTestimonials = [
-    {
-      id: 1,
-      gift_id: 1,
-      reviewer_name: "Alex M.",
-      relationship_length: "3 years",
-      partner_rating: 5,
-      testimonial_text: "She absolutely loved these! Best gift ever.",
-      occasion: "christmas"
-    }
-  ];
-
-  return new Promise((resolve, reject) => {
-    db.serialize(() => {
-      // Create tables
-      db.run(`
-        CREATE TABLE gifts (
-          id INTEGER PRIMARY KEY,
-          title TEXT NOT NULL,
-          description TEXT,
-          price REAL NOT NULL,
-          category TEXT NOT NULL,
-          occasion TEXT NOT NULL,
-          relationship_stage TEXT,
-          image_url TEXT,
-          affiliate_url TEXT NOT NULL,
-          retailer TEXT,
-          delivery_days INTEGER,
-          success_rate INTEGER DEFAULT 0,
-          total_reviews INTEGER DEFAULT 0,
-          is_active INTEGER DEFAULT 1,
-          created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-        )
-      `);
-
-      db.run(`
-        CREATE TABLE testimonials (
-          id INTEGER PRIMARY KEY,
-          gift_id INTEGER REFERENCES gifts(id),
-          reviewer_name TEXT NOT NULL,
-          relationship_length TEXT,
-          partner_rating INTEGER NOT NULL,
-          testimonial_text TEXT NOT NULL,
-          occasion TEXT,
-          helpful_votes INTEGER DEFAULT 0,
-          created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-        )
-      `);
-
-      db.run(`
-        CREATE TABLE analytics (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          event_type TEXT NOT NULL,
-          gift_id INTEGER,
-          session_id TEXT,
-          metadata TEXT,
-          created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-        )
-      `);
-
-      // Insert sample data
-      const giftStmt = db.prepare(`
-        INSERT INTO gifts (id, title, description, price, category, occasion, relationship_stage, image_url, affiliate_url, retailer, delivery_days, success_rate, total_reviews)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `);
-
-      sampleGifts.forEach(gift => {
-        giftStmt.run(
-          gift.id, gift.title, gift.description, gift.price, gift.category,
-          gift.occasion, gift.relationship_stage, gift.image_url,
-          gift.affiliate_url, gift.retailer, gift.delivery_days,
-          gift.success_rate, gift.total_reviews
-        );
-      });
-      giftStmt.finalize();
-
-      const testimonialStmt = db.prepare(`
-        INSERT INTO testimonials (id, gift_id, reviewer_name, relationship_length, partner_rating, testimonial_text, occasion)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-      `);
-
-      sampleTestimonials.forEach(testimonial => {
-        testimonialStmt.run(
-          testimonial.id, testimonial.gift_id, testimonial.reviewer_name,
-          testimonial.relationship_length, testimonial.partner_rating,
-          testimonial.testimonial_text, testimonial.occasion
-        );
-      });
-      testimonialStmt.finalize(() => {
-        console.log('Database setup complete!');
-        resolve();
-      });
+        const insertStmt = db.prepare('INSERT INTO gifts (title, description, price, category, occasion, relationship_stage, min_age, max_age, image_url, affiliate_url, retailer, delivery_days, success_rate, total_reviews) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+        sampleGifts.forEach(gift => {
+          insertStmt.run(
+            gift.title,
+            gift.description,
+            gift.price,
+            gift.category,
+            gift.occasion,
+            gift.relationship_stage,
+            gift.min_age,
+            gift.max_age,
+            gift.image_url,
+            gift.affiliate_url,
+            gift.retailer,
+            gift.delivery_days,
+            gift.success_rate,
+            gift.total_reviews
+          );
+        });
+        insertStmt.finalize();
+      }
     });
   });
 }
 
 function runQuery(sql, params = []) {
   return new Promise((resolve, reject) => {
+    initializeDatabase();
     db.all(sql, params, (err, rows) => {
-      if (err) reject(err);
-      else resolve(rows);
+      if (err) {
+        reject(err);
+      } else {
+        resolve(rows);
+      }
     });
   });
 }
 
-function runStatement(sql, params = []) {
-  return new Promise((resolve, reject) => {
-    db.run(sql, params, function(err) {
-      if (err) reject(err);
-      else resolve({ id: this.lastID, changes: this.changes });
-    });
-  });
-}
-
-// API Routes
-app.get('/api/health', async (req, res) => {
-  try {
-    await initializeDatabase();
-    await runQuery('SELECT 1');
-    res.json({
-      status: 'healthy',
-      timestamp: new Date().toISOString(),
-      environment: process.env.NODE_ENV || 'production',
-      database: 'connected'
-    });
-  } catch (err) {
-    res.status(500).json({
-      status: 'unhealthy',
-      error: err.message,
-      timestamp: new Date().toISOString()
-    });
-  }
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok' });
 });
 
+// Categories endpoint
+app.get('/api/categories', (req, res) => {
+  const categories = ['jewelry', 'experiences', 'home', 'fashion', 'beauty', 'tech', 'unique'];
+  res.json({ categories });
+});
+
+// Get gifts with filters
 app.get('/api/gifts', async (req, res) => {
+  const {
+    category,
+    occasion,
+    relationship_stage,
+    minAge,
+    maxAge,
+    minPrice,
+    maxPrice,
+    minSuccessRate,
+    minTotalReviews,
+    limit
+  } = req.query;
+
+  let query = 'SELECT * FROM gifts WHERE is_active = 1';
+  const params = [];
+
+  if (category) {
+    query += ' AND category = ?';
+    params.push(category);
+  }
+  if (occasion) {
+    query += ' AND occasion = ?';
+    params.push(occasion);
+  }
+  if (relationship_stage) {
+    query += ' AND relationship_stage = ?';
+    params.push(relationship_stage);
+  }
+  if (minAge) {
+    query += ' AND max_age >= ?';
+    params.push(parseInt(minAge));
+  }
+  if (maxAge) {
+    query += ' AND min_age <= ?';
+    params.push(parseInt(maxAge));
+  }
+  if (minPrice) {
+    query += ' AND price >= ?';
+    params.push(parseFloat(minPrice));
+  }
+  if (maxPrice) {
+    query += ' AND price <= ?';
+    params.push(parseFloat(maxPrice));
+  }
+  if (minSuccessRate) {
+    query += ' AND success_rate >= ?';
+    params.push(parseInt(minSuccessRate));
+  }
+  if (minTotalReviews) {
+    query += ' AND total_reviews >= ?';
+    params.push(parseInt(minTotalReviews));
+  }
+
+  query += ' ORDER BY success_rate DESC, total_reviews DESC LIMIT ?';
+  params.push(limit ? parseInt(limit) : 20);
+
   try {
-    await initializeDatabase();
-
-    const {
-      category,
-      minPrice,
-      maxPrice,
-      occasion,
-      relationshipStage,
-      minSuccessRate,
-      sortBy = 'success_rate',
-      limit = 20,
-      offset = 0
-    } = req.query;
-
-    let query = 'SELECT * FROM gifts WHERE is_active = 1';
-    const params = [];
-
-    if (category) {
-      query += ' AND category = ?';
-      params.push(category);
-    }
-    if (minPrice) {
-      query += ' AND price >= ?';
-      params.push(minPrice);
-    }
-    if (maxPrice) {
-      query += ' AND price <= ?';
-      params.push(maxPrice);
-    }
-    if (occasion) {
-      query += ' AND occasion = ?';
-      params.push(occasion);
-    }
-    if (relationshipStage) {
-      query += ' AND relationship_stage = ?';
-      params.push(relationshipStage);
-    }
-    if (minSuccessRate) {
-      query += ' AND success_rate >= ?';
-      params.push(minSuccessRate);
-    }
-
-    const sortOptions = {
-      'success_rate': 'success_rate DESC, total_reviews DESC',
-      'price_low': 'price ASC',
-      'price_high': 'price DESC',
-      'newest': 'created_at DESC',
-      'popular': 'total_reviews DESC'
-    };
-    query += ` ORDER BY ${sortOptions[sortBy] || sortOptions['success_rate']}`;
-
-    const countQuery = query.replace('SELECT *', 'SELECT COUNT(*) as count');
-    const countResult = await runQuery(countQuery, params);
-    const totalCount = countResult[0].count;
-
-    query += ' LIMIT ? OFFSET ?';
-    params.push(parseInt(limit), parseInt(offset));
-
     const gifts = await runQuery(query, params);
-
-    res.json({
-      gifts,
-      total: totalCount,
-      page: Math.floor(offset / limit) + 1,
-      totalPages: Math.ceil(totalCount / limit)
-    });
-  } catch (err) {
-    console.error('Error fetching gifts:', err);
-    res.status(500).json({ error: 'Server error fetching gifts' });
+    res.json({ gifts });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 
-app.get('/api/categories', async (req, res) => {
+// Analytics endpoint for popular gifts
+app.get('/api/analytics/popular', async (req, res) => {
   try {
-    await initializeDatabase();
-
-    const categories = [
-      { category: 'jewelry', displayName: 'Jewelry', icon: '💎', count: 5, min_price: 50, max_price: 500, avg_success_rate: 95 },
-      { category: 'experiences', displayName: 'Experiences', icon: '🎭', count: 4, min_price: 75, max_price: 300, avg_success_rate: 92 },
-      { category: 'home', displayName: 'Home & Living', icon: '🏠', count: 6, min_price: 25, max_price: 200, avg_success_rate: 88 },
-      { category: 'fashion', displayName: 'Fashion', icon: '👗', count: 7, min_price: 40, max_price: 350, avg_success_rate: 85 },
-      { category: 'beauty', displayName: 'Beauty & Wellness', icon: '💄', count: 5, min_price: 30, max_price: 150, avg_success_rate: 90 },
-      { category: 'tech', displayName: 'Tech & Gadgets', icon: '📱', count: 4, min_price: 50, max_price: 400, avg_success_rate: 87 },
-      { category: 'unique', displayName: 'Unique & Creative', icon: '✨', count: 2, min_price: 25, max_price: 100, avg_success_rate: 93 }
-    ];
-
-    res.json(categories);
-  } catch (err) {
-    console.error('Error fetching categories:', err);
-    res.status(500).json({ error: 'Server error fetching categories' });
+    const popular = await runQuery('SELECT * FROM gifts WHERE is_active = 1 ORDER BY success_rate DESC, total_reviews DESC LIMIT 10');
+    res.json({ popular });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 
-app.post('/api/analytics/track', async (req, res) => {
+// Survey questions endpoint
+app.get('/api/survey', (req, res) => {
+  const survey = [
+    { id: 'age', question: 'How old is the recipient?', type: 'number' },
+    { id: 'category', question: 'Preferred gift category?', type: 'choice', options: ['jewelry','experiences','home','fashion','beauty','tech','unique'] },
+    { id: 'budgetMin', question: 'Minimum budget', type: 'number' },
+    { id: 'budgetMax', question: 'Maximum budget', type: 'number' }
+  ];
+  res.json(survey);
+});
+
+// Survey result endpoint
+app.post('/api/survey-result', async (req, res) => {
+  const { age, category, budgetMin, budgetMax } = req.body;
+
+  let query = 'SELECT * FROM gifts WHERE is_active = 1';
+  const params = [];
+
+  if (age) {
+    query += ' AND min_age <= ? AND max_age >= ?';
+    params.push(parseInt(age), parseInt(age));
+  }
+  if (category) {
+    query += ' AND category = ?';
+    params.push(category);
+  }
+  if (budgetMin) {
+    query += ' AND price >= ?';
+    params.push(parseFloat(budgetMin));
+  }
+  if (budgetMax) {
+    query += ' AND price <= ?';
+    params.push(parseFloat(budgetMax));
+  }
+
+  query += ' ORDER BY success_rate DESC, total_reviews DESC LIMIT 10';
+
   try {
-    await initializeDatabase();
-
-    const { eventType, giftId, sessionId, metadata } = req.body;
-
-    const query = `
-      INSERT INTO analytics (event_type, gift_id, session_id, metadata)
-      VALUES (?, ?, ?, ?)
-    `;
-
-    const result = await runStatement(query, [
-      eventType,
-      giftId || null,
-      sessionId || 'anonymous',
-      JSON.stringify(metadata || {})
-    ]);
-
-    res.json({ success: true, id: result.id });
-  } catch (err) {
-    console.error('Error tracking analytics:', err);
-    res.status(500).json({ error: 'Server error tracking analytics' });
+    const suggestions = await runQuery(query, params);
+    res.json({ suggestions });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 
-// Export for Vercel
 module.exports = app;
