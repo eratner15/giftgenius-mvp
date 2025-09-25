@@ -71,7 +71,27 @@ function initializeDatabase() {
 }
 
 async function setupDatabase() {
-  // Sample data since we can't import the seed file easily in Vercel
+  db.run(`
+  CREATE TABLE gifts (
+    id INTEGER PRIMARY KEY,
+    title TEXT NOT NULL,
+    description TEXT,
+    price REAL NOT NULL,
+    category TEXT NOT NULL,
+    occasion TEXT NOT NULL,
+    relationship_stage TEXT,
+    min_age INTEGER DEFAULT 18,
+    max_age INTEGER DEFAULT 99,
+    image_url TEXT,
+    affiliate_url TEXT NOT NULL,
+    retailer TEXT,
+    delivery_days INTEGER,
+    success_rate INTEGER DEFAULT 0,
+    total_reviews INTEGER DEFAULT 0,
+    is_active INTEGER DEFAULT 1,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )
+`);
   const sampleGifts = [
     {
       id: 1,
