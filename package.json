@@ -51,5 +51,8 @@
     "express-validator": "^7.2.1",
     "sqlite3": "^5.1.7",
     "serverless-http": "^3.2.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
