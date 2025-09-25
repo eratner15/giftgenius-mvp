@@ -37,6 +37,8 @@ function App() {
   const [filter, setFilter] = useState({
     category: '',
     maxPrice: 1000,
+      minAge: '',
+  maxAge: '',
     minSuccessRate: 0,
     search: '',
     quickFilter: ''
