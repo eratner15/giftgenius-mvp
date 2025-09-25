@@ -69,11 +69,10 @@ function App() {
 
       setAllGifts(giftList);
       setGifts(giftList);
-      toast.showSuccess('Success', `Loaded ${giftList.length} gifts`);
     } catch (err) {
       console.error('Failed to fetch gifts:', err);
       setError(err.message);
-      toast.showError('Error', 'Failed to load gifts');
+      toast.showError('⚠️ Connection Issue', 'Using sample data instead');
     } finally {
       setLoading(false);
     }
@@ -430,11 +429,11 @@ function App() {
     if (isCurrentlySaved) {
       const newFavorites = favorites.filter(fav => fav.id !== gift.id);
       saveFavorites(newFavorites);
-      toast.showInfo('Removed', 'Gift removed from favorites');
+      toast.showInfo('💔 Removed', 'Removed from favorites');
     } else {
       const newFavorites = [...favorites, gift];
       saveFavorites(newFavorites);
-      toast.showSuccess('Saved', 'Gift added to favorites');
+      toast.showSuccess('💝 Saved', 'Added to favorites');
     }
   };
 

@@ -102,6 +102,19 @@ body {
   to { transform: translateY(0); opacity: 1; }
 }
 
+.hero-content {
+  position: relative;
+  z-index: 2;
+}
+
+.hero-subtitle {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  margin: 15px 0 25px;
+  font-weight: 300;
+  animation: slideUp 0.8s ease-out 0.4s both;
+}
+
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
