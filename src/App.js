@@ -248,12 +248,16 @@ function App() {
   // Start activity updates only after everything is loaded
   useEffect(() => {
     if (socialProof && allGifts.length > 0) {
-      const activityInterval = setInterval(() => {
-        socialProof.generateRealtimeActivity(allGifts);
-        setActivities([...socialProof.getActivities()]);
-      }, 8000);
+      // Generate initial activities but don't auto-update
+      socialProof.generateRealtimeActivity(allGifts);
+      setActivities([...socialProof.getActivities()]);
 
-      return () => clearInterval(activityInterval);
+      // Uncomment below for real-time updates (currently disabled for better UX)
+      // const activityInterval = setInterval(() => {
+      //   socialProof.generateRealtimeActivity(allGifts);
+      //   setActivities([...socialProof.getActivities()]);
+      // }, 30000); // 30 seconds instead of 8
+      // return () => clearInterval(activityInterval);
     }
   }, [socialProof, allGifts]);
 
@@ -482,7 +486,7 @@ function App() {
         {/* Activity Feed */}
         {activities.length > 0 && (
           <div className="activity-feed">
-            {activities.map(activity => (
+            {activities.slice(0, 3).map(activity => (
               <div key={activity.id} className="activity-item">
                 <div className="activity-avatar">
                   {activity.name.charAt(0)}
