@@ -52,7 +52,7 @@ const GiftCard = ({ gift, onClick, analytics, recommendationEngine }) => {
   const aiInsight = getAiInsight(gift);
 
   return (
-    <div className="gift-card" onClick={handleClick}>
+    <div className="gift-card enhanced-button" onClick={handleClick}>
       <img
         src={gift.image || '/api/placeholder/300/200'}
         alt={gift.name || gift.title}

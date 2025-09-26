@@ -107,7 +107,33 @@ const FilterBar = ({
           <option value={95}>95%+ Success</option>
         </select>
 
-        <button className="clear-filters" onClick={clearFilters}>
+        <select
+          value={filter.occasion}
+          onChange={(e) => setFilter(prev => ({ ...prev, occasion: e.target.value }))}
+        >
+          <option value="">Any Occasion</option>
+          <option value="birthday">🎂 Birthday</option>
+          <option value="anniversary">💕 Anniversary</option>
+          <option value="wedding">💒 Wedding</option>
+          <option value="graduation">🎓 Graduation</option>
+          <option value="holiday">🎄 Holiday</option>
+          <option value="thank you">🙏 Thank You</option>
+          <option value="valentines">💝 Valentine's</option>
+        </select>
+
+        <select
+          value={filter.relationship}
+          onChange={(e) => setFilter(prev => ({ ...prev, relationship: e.target.value }))}
+        >
+          <option value="">Any Relationship</option>
+          <option value="dating">💕 Dating</option>
+          <option value="married">💑 Married</option>
+          <option value="family">👨‍👩‍👧‍👦 Family</option>
+          <option value="friend">👯 Friend</option>
+          <option value="colleague">💼 Colleague</option>
+        </select>
+
+        <button className="clear-filters enhanced-button" onClick={clearFilters}>
           Clear All
         </button>
       </div>

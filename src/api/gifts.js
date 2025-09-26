@@ -1,7 +1,8 @@
 // API Service Layer for GiftGenius Backend
-const API_BASE_URL = process.env.NODE_ENV === 'production'
-  ? '' // Use relative path in production
-  : 'http://localhost:3001';
+const API_BASE_URL = process.env.REACT_APP_API_URL ||
+  (process.env.NODE_ENV === 'production'
+    ? 'https://api-74vqh9434-eratner15s-projects.vercel.app' // Updated production API
+    : 'http://localhost:3001'); // Local development
 
 class ApiService {
   async request(url, options = {}) {

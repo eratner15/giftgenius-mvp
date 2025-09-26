@@ -12,14 +12,14 @@ const GiftGrid = ({
 }) => {
   if (loading) {
     return (
-      <div className="gift-grid">
+      <div className="gift-grid loading">
         {[...Array(6)].map((_, index) => (
-          <div key={index} className="skeleton-card">
-            <div className="skeleton skeleton-image"></div>
+          <div key={index} className="skeleton-gift-card">
+            <div className="skeleton-image"></div>
             <div className="skeleton-content">
-              <div className="skeleton skeleton-title"></div>
-              <div className="skeleton skeleton-price"></div>
-              <div className="skeleton skeleton-rating"></div>
+              <div className="skeleton-title"></div>
+              <div className="skeleton-price"></div>
+              <div className="skeleton-rating"></div>
             </div>
           </div>
         ))}
@@ -59,25 +59,25 @@ const GiftGrid = ({
         </div>
         <div className="sort-options">
           <button
-            className={`sort-btn ${sortBy === 'personalized' ? 'active' : ''}`}
+            className={`sort-btn enhanced-button ${sortBy === 'personalized' ? 'active' : ''}`}
             onClick={() => setSortBy('personalized')}
           >
             🤖 For You
           </button>
           <button
-            className={`sort-btn ${sortBy === 'popular' ? 'active' : ''}`}
+            className={`sort-btn enhanced-button ${sortBy === 'popular' ? 'active' : ''}`}
             onClick={() => setSortBy('popular')}
           >
             ⭐ Most Popular
           </button>
           <button
-            className={`sort-btn ${sortBy === 'price-low' ? 'active' : ''}`}
+            className={`sort-btn enhanced-button ${sortBy === 'price-low' ? 'active' : ''}`}
             onClick={() => setSortBy('price-low')}
           >
             💰 Price: Low to High
           </button>
           <button
-            className={`sort-btn ${sortBy === 'price-high' ? 'active' : ''}`}
+            className={`sort-btn enhanced-button ${sortBy === 'price-high' ? 'active' : ''}`}
             onClick={() => setSortBy('price-high')}
           >
             💎 Price: High to Low
