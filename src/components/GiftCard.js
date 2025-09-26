@@ -75,7 +75,7 @@ const GiftCard = ({ gift, onClick, analytics, recommendationEngine }) => {
               alt={gift.name}
               onLoad={handleImageLoad}
                             onError={handleImageError}
-                                          style={{ 
+image_urlstyle={{ 
                                                           display: imageLoaded ? 'block' : 'none',
                                                           width: '100%',
                                                           height: '200px',
@@ -102,7 +102,7 @@ const GiftCard = ({ gift, onClick, analytics, recommendationEngine }) => {
         alt={gift.name || gift.title}
         onError={(e) => {
           e.target.src = '/api/placeholder/300/200';
-        }}
+        image_url
       />
 
       {badge && (
