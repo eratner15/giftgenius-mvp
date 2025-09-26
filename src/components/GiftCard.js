@@ -4,6 +4,13 @@ const GiftCard = ({ gift, onClick, analytics, recommendationEngine }) => {
   const handleClick = () => {
     if (analytics) {
       analytics.trackGiftView(gift.id);
+        // Image loading states
+        const [imageLoaded, setImageLoaded] = useState(false);
+        const [imageError, setImageError] = useState(false);
+
+        const handleImageLoad = () => setImageLoaded(true);
+        const handleImageError = () => setImageError(true);
+      
       analytics.trackCategoryInterest(gift.category);
       analytics.trackPriceInterest(gift.price);
     }
@@ -53,6 +60,43 @@ const GiftCard = ({ gift, onClick, analytics, recommendationEngine }) => {
 
   return (
     <div className="gift-card enhanced-button" onClick={handleClick}>
+
+    {/* Image Container with Loading States */}
+          <div className="gift-image-container">
+    {!imageLoaded && !imageError && (
+                <div className="image-skeleton">
+                  <div className="skeleton-shimmer"></div>
+      </div>
+              )}
+
+  {!imageError ? (
+              <img 
+                src={gift.imageUrl}
+              alt={gift.name}
+              onLoad={handleImageLoad}
+                            onError={handleImageError}
+                                          style={{ 
+                                                          display: imageLoaded ? 'block' : 'none',
+                                                          width: '100%',
+                                                          height: '200px',
+                                                          objectFit: 'cover',
+                                                          borderRadius: '8px'
+                                          }}
+            loading="lazy"
+                        />
+                      ) : (
+                                  <div className="image-placeholder">
+                                    <div className="placeholder-icon">🎁</div>
+                          <span className="placeholder-text">{gift.name}</span>
+              </div>
+                      )}
+
+{badge && (
+            <span className={`badge ${badge.text.toLowerCase()}`}>
+{badge.text}
+</span>
+          )}
+</div>
       <img
         src={gift.image || '/api/placeholder/300/200'}
         alt={gift.name || gift.title}
