@@ -2,6 +2,7 @@
 const enhancedGifts = [
   // Jewelry Category
   {
+    id: 1,
     title: "Diamond Tennis Bracelet",
     description: "Elegant 14k white gold bracelet with genuine diamonds - a timeless classic",
     price: 299.99,
@@ -11,6 +12,7 @@ const enhancedGifts = [
     image_url: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=500&h=500&fit=crop&auto=format"
   },
   {
+    id: 2,
     title: "Tahitian Pearl Necklace",
     description: "Freshwater pearl necklace with matching earrings - AAA quality pearls",
     price: 189.99,
@@ -20,6 +22,7 @@ const enhancedGifts = [
     image_url: "https://images.unsplash.com/photo-1506630448388-4e683c67ddb0?w=500&h=500&fit=crop&auto=format"
   },
   {
+    id: 3,
     title: "Rose Gold Engagement Ring",
     description: "Stunning solitaire engagement ring with 1 carat diamond",
     price: 1299.99,
@@ -31,6 +34,7 @@ const enhancedGifts = [
 
   // Tech Category
   {
+    id: 4,
     title: "Apple Watch Series 9",
     description: "Latest Apple Watch with health monitoring, GPS, and cellular connectivity",
     price: 399.99,
@@ -40,6 +44,7 @@ const enhancedGifts = [
     image_url: "https://images.unsplash.com/photo-1544117519-31a4b719223d?w=500&h=500&fit=crop&auto=format"
   },
   {
+    id: 9,
     title: "AirPods Pro 2nd Generation",
     description: "Wireless earbuds with active noise cancellation and spatial audio",
     price: 249.99,
@@ -49,6 +54,7 @@ const enhancedGifts = [
     image_url: "https://images.unsplash.com/photo-1588423771073-b8903fbb85b5?w=500&h=500&fit=crop&auto=format"
   },
   {
+    id: 10,
     title: "iPad Air 5th Generation",
     description: "Powerful tablet perfect for creativity, productivity, and entertainment",
     price: 599.99,
@@ -58,6 +64,7 @@ const enhancedGifts = [
     image_url: "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=500&h=500&fit=crop&auto=format"
   },
   {
+    id: 11,
     title: "Portable Bluetooth Speaker",
     description: "Waterproof speaker with 360-degree sound and 12-hour battery life",
     price: 89.99,
@@ -69,6 +76,7 @@ const enhancedGifts = [
 
   // Beauty Category
   {
+    id: 12,
     title: "Luxury Skincare Ritual Set",
     description: "Complete skincare routine with organic ingredients - vitamin C serum, retinol, and moisturizer",
     price: 156.99,
@@ -78,6 +86,7 @@ const enhancedGifts = [
     image_url: "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=500&h=500&fit=crop&auto=format"
   },
   {
+    id: 13,
     title: "Professional Makeup Brush Set",
     description: "20-piece professional makeup brush collection with premium synthetic bristles",
     price: 78.99,
@@ -87,6 +96,7 @@ const enhancedGifts = [
     image_url: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=500&h=500&fit=crop&auto=format"
   },
   {
+    id: 14,
     title: "Luxury Perfume Collection",
     description: "Set of 5 designer fragrance samples in travel-size bottles",
     price: 125.00,
@@ -98,6 +108,7 @@ const enhancedGifts = [
 
   // Home Category
   {
+    id: 15,
     title: "Luxury Silk Pillowcase Set",
     description: "100% Mulberry silk pillowcases for better sleep and skincare - hypoallergenic and temperature regulating",
     price: 89.99,
@@ -107,6 +118,7 @@ const enhancedGifts = [
     image_url: "https://images.unsplash.com/photo-1587222318667-31212ce2828d?w=500&h=500&fit=crop&auto=format"
   },
   {
+    id: 16,
     title: "Smart Diffuser with Essential Oils",
     description: "WiFi-enabled aromatherapy diffuser with 6 premium essential oil blends",
     price: 145.99,
@@ -116,6 +128,7 @@ const enhancedGifts = [
     image_url: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=500&h=500&fit=crop&auto=format"
   },
   {
+    id: 17,
     title: "Weighted Blanket Premium",
     description: "15lb weighted blanket with removable bamboo cover for better sleep",
     price: 129.99,
@@ -127,6 +140,7 @@ const enhancedGifts = [
 
   // Fashion Category
   {
+    id: 18,
     title: "Premium Rose Gold Watch",
     description: "Sophisticated rose gold watch with leather band - perfect for special occasions",
     price: 185.00,
@@ -136,6 +150,7 @@ const enhancedGifts = [
     image_url: "https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=500&h=500&fit=crop&auto=format"
   },
   {
+    id: 19,
     title: "Cashmere Scarf Collection",
     description: "Luxurious 100% cashmere scarf in multiple elegant colors",
     price: 168.00,
@@ -145,6 +160,7 @@ const enhancedGifts = [
     image_url: "https://images.unsplash.com/photo-1544441893-675973e31985?w=500&h=500&fit=crop&auto=format"
   },
   {
+    id: 20,
     title: "Designer Leather Handbag",
     description: "Premium Italian leather handbag with gold hardware and dust bag",
     price: 245.99,
@@ -156,6 +172,7 @@ const enhancedGifts = [
 
   // Unique/Special Category
   {
+    id: 21,
     title: "Personalized Star Map",
     description: "Custom star map showing the night sky from any date and location - perfect for anniversaries",
     price: 45.99,
@@ -165,6 +182,7 @@ const enhancedGifts = [
     image_url: "https://images.unsplash.com/photo-1446776676547-bc4daea5638e?w=500&h=500&fit=crop&auto=format"
   },
   {
+    id: 22,
     title: "Custom Pet Portrait",
     description: "Hand-painted watercolor portrait of beloved pet in premium frame",
     price: 89.99,
@@ -174,6 +192,7 @@ const enhancedGifts = [
     image_url: "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=500&h=500&fit=crop&auto=format"
   },
   {
+    id: 23,
     title: "Message in a Bottle",
     description: "Personalized message in vintage-style bottle with custom wax seal",
     price: 34.99,
@@ -185,6 +204,7 @@ const enhancedGifts = [
 
   // Food & Gourmet Category
   {
+    id: 24,
     title: "Artisan Belgian Chocolate Collection",
     description: "Handcrafted chocolates from premium Belgian cocoa - 24 piece luxury gift box",
     price: 62.50,
@@ -194,6 +214,7 @@ const enhancedGifts = [
     image_url: "https://images.unsplash.com/photo-1481391319762-47dff72954d9?w=500&h=500&fit=crop&auto=format"
   },
   {
+    id: 25,
     title: "Gourmet Coffee Subscription",
     description: "3-month subscription to premium single-origin coffee beans",
     price: 89.99,
@@ -203,6 +224,7 @@ const enhancedGifts = [
     image_url: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=500&h=500&fit=crop&auto=format"
   },
   {
+    id: 26,
     title: "Truffle Tasting Box",
     description: "Assorted truffle collection with white and black truffles",
     price: 156.99,
@@ -214,6 +236,7 @@ const enhancedGifts = [
 
   // Experience Category
   {
+    id: 27,
     title: "Wine Tasting Experience",
     description: "Private wine tasting session at a local vineyard - create lasting memories together",
     price: 120.00,
@@ -223,6 +246,7 @@ const enhancedGifts = [
     image_url: "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=500&h=500&fit=crop&auto=format"
   },
   {
+    id: 28,
     title: "Couples Spa Day Package",
     description: "Full day spa experience for two with massage, facial, and champagne",
     price: 299.99,
@@ -232,6 +256,7 @@ const enhancedGifts = [
     image_url: "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=500&h=500&fit=crop&auto=format"
   },
   {
+    id: 29,
     title: "Hot Air Balloon Ride",
     description: "Romantic hot air balloon ride with champagne toast and panoramic views",
     price: 199.99,
