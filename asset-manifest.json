@@ -1,31 +1,10 @@
 {
   "files": {
-    "main.css": "/giftgenius-mvp/static/css/main.9b4cbc9c.css",
-    "main.js": "/giftgenius-mvp/static/js/main.a2abb412.js",
-    "static/js/652.b1b6aaaa.chunk.js": "/giftgenius-mvp/static/js/652.b1b6aaaa.chunk.js",
-    "static/js/38.7180d489.chunk.js": "/giftgenius-mvp/static/js/38.7180d489.chunk.js",
-    "static/js/167.febcdeca.chunk.js": "/giftgenius-mvp/static/js/167.febcdeca.chunk.js",
-    "static/js/264.944eb5c2.chunk.js": "/giftgenius-mvp/static/js/264.944eb5c2.chunk.js",
-    "static/js/514.4be11b25.chunk.js": "/giftgenius-mvp/static/js/514.4be11b25.chunk.js",
-    "static/js/915.84b4a226.chunk.js": "/giftgenius-mvp/static/js/915.84b4a226.chunk.js",
-    "static/js/247.33f3ad7e.chunk.js": "/giftgenius-mvp/static/js/247.33f3ad7e.chunk.js",
-    "static/js/384.9b2afd8d.chunk.js": "/giftgenius-mvp/static/js/384.9b2afd8d.chunk.js",
-    "static/js/818.63518097.chunk.js": "/giftgenius-mvp/static/js/818.63518097.chunk.js",
+    "main.js": "/giftgenius-mvp/static/js/main.ece094c6.js",
     "index.html": "/giftgenius-mvp/index.html",
-    "main.9b4cbc9c.css.map": "/giftgenius-mvp/static/css/main.9b4cbc9c.css.map",
-    "main.a2abb412.js.map": "/giftgenius-mvp/static/js/main.a2abb412.js.map",
-    "652.b1b6aaaa.chunk.js.map": "/giftgenius-mvp/static/js/652.b1b6aaaa.chunk.js.map",
-    "38.7180d489.chunk.js.map": "/giftgenius-mvp/static/js/38.7180d489.chunk.js.map",
-    "167.febcdeca.chunk.js.map": "/giftgenius-mvp/static/js/167.febcdeca.chunk.js.map",
-    "264.944eb5c2.chunk.js.map": "/giftgenius-mvp/static/js/264.944eb5c2.chunk.js.map",
-    "514.4be11b25.chunk.js.map": "/giftgenius-mvp/static/js/514.4be11b25.chunk.js.map",
-    "915.84b4a226.chunk.js.map": "/giftgenius-mvp/static/js/915.84b4a226.chunk.js.map",
-    "247.33f3ad7e.chunk.js.map": "/giftgenius-mvp/static/js/247.33f3ad7e.chunk.js.map",
-    "384.9b2afd8d.chunk.js.map": "/giftgenius-mvp/static/js/384.9b2afd8d.chunk.js.map",
-    "818.63518097.chunk.js.map": "/giftgenius-mvp/static/js/818.63518097.chunk.js.map"
+    "main.ece094c6.js.map": "/giftgenius-mvp/static/js/main.ece094c6.js.map"
   },
   "entrypoints": [
-    "static/css/main.9b4cbc9c.css",
-    "static/js/main.a2abb412.js"
+    "static/js/main.ece094c6.js"
   ]
 }
