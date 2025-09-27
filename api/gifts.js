@@ -1,6 +1,6 @@
-const { db } = require('./_shared/database');
 const { setCorsHeaders } = require('./_shared/cors');
 const { validateGiftQueryParams } = require('./_shared/validation');
+const { enhancedGifts } = require('./_shared/enhanced-gifts');
 
 export default function handler(req, res) {
   // Handle CORS
@@ -47,82 +47,48 @@ function handleGetGifts(req, res, startTime) {
   });
 
   try {
-    let sqlQuery = 'SELECT * FROM gifts WHERE 1=1';
-    const params = [];
+    // Use in-memory filtering instead of SQLite for Vercel compatibility
+    let gifts = [...enhancedGifts];
 
+    // Apply filters
     if (validated.category) {
-      sqlQuery += ' AND category = ?';
-      params.push(validated.category);
+      gifts = gifts.filter(gift => gift.category === validated.category);
     }
 
     if (validated.minPrice !== undefined) {
-      sqlQuery += ' AND price >= ?';
-      params.push(validated.minPrice);
+      gifts = gifts.filter(gift => gift.price >= validated.minPrice);
     }
 
     if (validated.maxPrice !== undefined) {
-      sqlQuery += ' AND price <= ?';
-      params.push(validated.maxPrice);
+      gifts = gifts.filter(gift => gift.price <= validated.maxPrice);
     }
 
     if (validated.minSuccessRate !== undefined) {
-      sqlQuery += ' AND success_rate >= ?';
-      params.push(validated.minSuccessRate);
+      gifts = gifts.filter(gift => gift.success_rate >= validated.minSuccessRate);
     }
 
     if (validated.search) {
-      sqlQuery += ' AND (title LIKE ? OR description LIKE ?)';
-      const searchPattern = `%${validated.search}%`;
-      params.push(searchPattern, searchPattern);
+      const searchTerm = validated.search.toLowerCase();
+      gifts = gifts.filter(gift =>
+        gift.title.toLowerCase().includes(searchTerm) ||
+        gift.description.toLowerCase().includes(searchTerm)
+      );
     }
 
-    // Add ordering and pagination
-    sqlQuery += ' ORDER BY success_rate DESC, total_reviews DESC';
+    // Sort by success rate and reviews
+    gifts.sort((a, b) => {
+      if (b.success_rate !== a.success_rate) {
+        return b.success_rate - a.success_rate;
+      }
+      return b.total_reviews - a.total_reviews;
+    });
 
-    if (validated.limit) {
-      sqlQuery += ' LIMIT ?';
-      params.push(validated.limit);
-    }
+    const total = gifts.length;
 
-    if (validated.offset) {
-      sqlQuery += ' OFFSET ?';
-      params.push(validated.offset);
-    }
-
-    const stmt = db.prepare(sqlQuery);
-    const gifts = stmt.all(...params);
-
-    let countQuery = 'SELECT COUNT(*) as total FROM gifts WHERE 1=1';
-    const countParams = [];
-
-    if (validated.category) {
-      countQuery += ' AND category = ?';
-      countParams.push(validated.category);
-    }
-
-    if (validated.minPrice !== undefined) {
-      countQuery += ' AND price >= ?';
-      countParams.push(validated.minPrice);
-    }
-
-    if (validated.maxPrice !== undefined) {
-      countQuery += ' AND price <= ?';
-      countParams.push(validated.maxPrice);
-    }
-
-    if (validated.minSuccessRate !== undefined) {
-      countQuery += ' AND success_rate >= ?';
-      countParams.push(validated.minSuccessRate);
-    }
-
-    if (validated.search) {
-      countQuery += ' AND (title LIKE ? OR description LIKE ?)';
-      const searchPattern = `%${validated.search}%`;
-      countParams.push(searchPattern, searchPattern);
-    }
-
-    const countStmt = db.prepare(countQuery);
-    const { total } = countStmt.get(...countParams);
+    // Apply pagination
+    const startIndex = validated.offset || 0;
+    const endIndex = startIndex + (validated.limit || 50);
+    gifts = gifts.slice(startIndex, endIndex);
 
     const processingTime = Date.now() - startTime;
 

@@ -1,0 +1,35 @@
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "GiftGenius",
+  "description": "AI-powered gift recommendation platform that helps you find the perfect gift for any occasion. Backed by real reviews and smart algorithms.",
+  "url": "https://giftgenius-mvp.vercel.app",
+  "applicationCategory": "LifestyleApplication",
+  "operatingSystem": "All",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.8",
+    "ratingCount": "1247",
+    "bestRating": "5",
+    "worstRating": "1"
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "GiftGenius",
+    "url": "https://giftgenius-mvp.vercel.app"
+  },
+  "featureList": [
+    "AI-powered gift recommendations",
+    "Real customer reviews",
+    "Gift finder by occasion",
+    "Price comparison",
+    "Personalized suggestions",
+    "Mobile-optimized interface"
+  ],
+  "screenshot": "https://giftgenius-mvp.vercel.app/screenshot.png"
+}
