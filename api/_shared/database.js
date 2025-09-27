@@ -1,5 +1,6 @@
 const Database = require('better-sqlite3');
 const path = require('path');
+const { enhancedGifts } = require('./enhanced-gifts');
 
 // Initialize SQLite database
 const dbPath = path.join(process.cwd(), 'api', 'gifts.db');
@@ -20,83 +21,83 @@ db.exec(`
   );
 `);
 
-// Sample gifts data for initialization
+// Enhanced gift database with comprehensive data and high-quality images
 const sampleGifts = [
   {
     title: "Personalized Star Map",
-    description: "Custom star map showing the night sky from any date and location",
+    description: "Custom star map showing the night sky from any date and location - perfect for anniversaries",
     price: 45.99,
     category: "unique",
     success_rate: 95,
     total_reviews: 2847,
-    image_url: "https://images.unsplash.com/photo-1446776676547-bc4daea5638e?w=400&h=400&fit=crop"
+    image_url: "https://images.unsplash.com/photo-1446776676547-bc4daea5638e?w=500&h=500&fit=crop&auto=format"
   },
   {
     title: "Diamond Tennis Bracelet",
-    description: "Elegant 14k white gold bracelet with genuine diamonds",
+    description: "Elegant 14k white gold bracelet with genuine diamonds - a timeless classic",
     price: 299.99,
     category: "jewelry",
     success_rate: 98,
     total_reviews: 1523,
-    image_url: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&h=400&fit=crop"
+    image_url: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=500&h=500&fit=crop&auto=format"
   },
   {
     title: "Wine Tasting Experience",
-    description: "Private wine tasting session at a local vineyard",
+    description: "Private wine tasting session at a local vineyard - create lasting memories together",
     price: 120.00,
     category: "experiences",
     success_rate: 92,
     total_reviews: 987,
-    image_url: "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=400&h=400&fit=crop"
+    image_url: "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=500&h=500&fit=crop&auto=format"
   },
   {
-    title: "Luxury Candle Set",
-    description: "Set of 3 premium soy candles with different scents",
-    price: 68.50,
+    title: "Luxury Silk Pillowcase Set",
+    description: "100% Mulberry silk pillowcases for better sleep and skincare - hypoallergenic and temperature regulating",
+    price: 89.99,
     category: "home",
-    success_rate: 89,
+    success_rate: 94,
     total_reviews: 2156,
-    image_url: "https://images.unsplash.com/photo-1602874801007-35967517b44a?w=400&h=400&fit=crop"
+    image_url: "https://images.unsplash.com/photo-1587222318667-31212ce2828d?w=500&h=500&fit=crop&auto=format"
   },
   {
-    title: "Silk Scarf Collection",
-    description: "Handcrafted silk scarves in various patterns",
-    price: 85.00,
+    title: "Premium Rose Gold Watch",
+    description: "Sophisticated rose gold watch with leather band - perfect for special occasions",
+    price: 185.00,
     category: "fashion",
     success_rate: 91,
     total_reviews: 743,
-    image_url: "https://images.unsplash.com/photo-1544441893-675973e31985?w=400&h=400&fit=crop"
+    image_url: "https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=500&h=500&fit=crop&auto=format"
   },
   {
-    title: "Premium Skincare Kit",
-    description: "Complete skincare routine with organic ingredients",
+    title: "Luxury Skincare Ritual Set",
+    description: "Complete skincare routine with organic ingredients - vitamin C serum, retinol, and moisturizer",
     price: 156.99,
     category: "beauty",
     success_rate: 94,
     total_reviews: 1876,
-    image_url: "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=400&h=400&fit=crop"
+    image_url: "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=500&h=500&fit=crop&auto=format"
   },
   {
-    title: "Smart Watch Series",
-    description: "Latest smartwatch with health monitoring features",
-    price: 249.99,
+    title: "Apple Watch Series 9",
+    description: "Latest Apple Watch with health monitoring, GPS, and cellular connectivity",
+    price: 399.99,
     category: "tech",
     success_rate: 96,
     total_reviews: 4521,
-    image_url: "https://images.unsplash.com/photo-1544117519-31a4b719223d?w=400&h=400&fit=crop"
+    image_url: "https://images.unsplash.com/photo-1544117519-31a4b719223d?w=500&h=500&fit=crop&auto=format"
   },
   {
-    title: "Artisan Chocolate Box",
-    description: "Handcrafted chocolates from premium Belgian cocoa",
-    price: 42.50,
-    category: "unique",
+    title: "Artisan Belgian Chocolate Collection",
+    description: "Handcrafted chocolates from premium Belgian cocoa - 24 piece luxury gift box",
+    price: 62.50,
+    category: "food",
     success_rate: 88,
     total_reviews: 1294,
-    image_url: "https://images.unsplash.com/photo-1481391319762-47dff72954d9?w=400&h=400&fit=crop"
+    image_url: "https://images.unsplash.com/photo-1481391319762-47dff72954d9?w=500&h=500&fit=crop&auto=format"
   },
   {
-    title: "Pearl Necklace Set",
-    description: "Freshwater pearl necklace with matching earrings",
+    title: "Tahitian Pearl Necklace",
+    description: "Freshwater pearl necklace with matching earrings - AAA quality pearls",
     price: 189.99,
     category: "jewelry",
     success_rate: 97,
@@ -268,8 +269,8 @@ function initializeDatabase() {
         }
       });
 
-      insertMany(sampleGifts);
-      console.log(`Inserted ${sampleGifts.length} sample gifts into database`);
+      insertMany(enhancedGifts);
+      console.log(`Inserted ${enhancedGifts.length} enhanced gifts into database`);
     }
   } catch (error) {
     console.error('Error initializing database:', error);
