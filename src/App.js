@@ -5,6 +5,9 @@ import './styles/SimpleFilterBar.css';
 import './styles/GiftCard.css';
 import './styles/Hero.css';
 import './styles/QuickGiftFinder.css';
+import './styles/ProductDetailModal.css';
+import './styles/AIGiftingExpert.css';
+import './styles/Footer.css';
 
 import Hero from './components/Hero';
 import QuickGiftFinder from './components/QuickGiftFinder';
@@ -14,6 +17,9 @@ import LoadingSpinner from './components/LoadingSpinner';
 import ErrorMessage from './components/ErrorMessage';
 import ResultsSummary from './components/ResultsSummary';
 import ProductDetailView from './components/ProductDetailView';
+import ProductDetailModal from './components/ProductDetailModal';
+import AIGiftingExpert from './components/AIGiftingExpert';
+import Footer from './components/Footer';
 import GiftFinderWizard from './components/GiftFinderWizard';
 
 function App() {
@@ -24,6 +30,11 @@ function App() {
   const [error, setError] = useState(null);
   const [showFinder, setShowFinder] = useState(false);
   const [showResults, setShowResults] = useState(false);
+  const [showAIChat, setShowAIChat] = useState(false);
+  const [favorites, setFavorites] = useState(() => {
+    const saved = localStorage.getItem('giftgenius_favorites');
+    return saved ? JSON.parse(saved) : [];
+  });
   const [filters, setFilters] = useState({
     category: '',
     minPrice: '',
@@ -68,7 +79,21 @@ function App() {
   };
 
   const handleGiftClick = (gift) => {
-    window.location.href = `/products/${gift.id}`;
+    setSelectedGift(gift);
+  };
+
+  const handleAddToFavorites = (gift) => {
+    const isFavorited = favorites.some(f => f.id === gift.id);
+    let newFavorites;
+
+    if (isFavorited) {
+      newFavorites = favorites.filter(f => f.id !== gift.id);
+    } else {
+      newFavorites = [...favorites, gift];
+    }
+
+    setFavorites(newFavorites);
+    localStorage.setItem('giftgenius_favorites', JSON.stringify(newFavorites));
   };
 
   const handleScenarioSelect = async (scenario) => {
@@ -154,6 +179,37 @@ function App() {
           />
         </>
       )}
+
+      {selectedGift && (
+        <ProductDetailModal
+          gift={selectedGift}
+          onClose={() => setSelectedGift(null)}
+          onAddToFavorites={handleAddToFavorites}
+          isFavorited={favorites.some(f => f.id === selectedGift.id)}
+        />
+      )}
+
+      {!showAIChat && (
+        <button
+          className="ai-chat-toggle"
+          onClick={() => setShowAIChat(true)}
+          title="Chat with AI Gifting Expert"
+        >
+          🤖
+        </button>
+      )}
+
+      {showAIChat && (
+        <AIGiftingExpert
+          onClose={() => setShowAIChat(false)}
+          gifts={allGifts}
+          onRecommendGift={(gift) => {
+            setSelectedGift(gift);
+          }}
+        />
+      )}
+
+      <Footer />
     </div>
   );
 }
