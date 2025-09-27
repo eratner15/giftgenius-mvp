@@ -2,3 +2,6 @@ github.com
 .vercel
 node_modules
 *.db
+
+# Local Netlify folder
+.netlify
