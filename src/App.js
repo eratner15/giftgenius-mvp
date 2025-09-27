@@ -40,8 +40,14 @@ import './styles/ComponentEnhancements.css';
 import './styles/MobileExcellence.css';
 import './styles/SocialViral.css';
 import './styles/PremiumFeatures.css';
+import ProductDetailView from './components/ProductDetailView';
 
 function App() {
+    const pathname = window.location.pathname;
+  if (pathname && pathname.startsWith('/products/')) {
+    const id = pathname.split('/').pop();
+    return <ProductDetailView id={id} />;
+    }
   // State management
   const [gifts, setGifts] = useState([]);
   const [allGifts, setAllGifts] = useState([]);
