@@ -1,0 +1,312 @@
+/* Gift Finder Modal */
+.gift-finder-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.finder-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  animation: fadeIn 0.3s ease;
+}
+
+.finder-content {
+  position: relative;
+  background: white;
+  border-radius: 24px;
+  padding: 48px;
+  max-width: 800px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Close Button */
+.close-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: #f3f4f6;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  color: #6b7280;
+}
+
+.close-button:hover {
+  background: #e5e7eb;
+  color: #1f2937;
+  transform: rotate(90deg);
+}
+
+/* Progress Bar */
+.progress-bar {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 48px;
+}
+
+.progress-step {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #e5e7eb;
+  color: #9ca3af;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 16px;
+  transition: all 0.3s;
+  position: relative;
+}
+
+.progress-step.active {
+  background: #6B46C1;
+  color: white;
+}
+
+.progress-step.current {
+  transform: scale(1.2);
+  box-shadow: 0 0 0 4px rgba(107, 70, 193, 0.2);
+}
+
+.progress-step::after {
+  content: '';
+  position: absolute;
+  left: 100%;
+  width: 12px;
+  height: 2px;
+  background: #e5e7eb;
+}
+
+.progress-step:last-child::after {
+  display: none;
+}
+
+.progress-step.active::after {
+  background: #6B46C1;
+}
+
+/* Finder Step */
+.finder-step {
+  text-align: center;
+}
+
+.step-title {
+  font-size: 32px;
+  font-weight: 800;
+  color: #1f2937;
+  margin: 0 0 12px 0;
+}
+
+.step-subtitle {
+  font-size: 16px;
+  color: #6b7280;
+  margin: 0 0 32px 0;
+}
+
+/* Options Grid */
+.options-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.option-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 24px 16px;
+  background: #f9fafb;
+  border: 3px solid #e5e7eb;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-align: center;
+}
+
+.option-card:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+  transform: translateY(-4px);
+}
+
+.option-card.selected {
+  background: #ede9fe;
+  border-color: #6B46C1;
+  box-shadow: 0 4px 12px rgba(107, 70, 193, 0.2);
+}
+
+.option-card.multi.selected {
+  background: linear-gradient(135deg, #ede9fe, #ddd6fe);
+}
+
+.option-emoji {
+  font-size: 40px;
+  line-height: 1;
+}
+
+.option-label {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+/* Options List (for budget) */
+.options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 400px;
+  margin: 0 auto 24px;
+}
+
+.option-button {
+  padding: 20px 24px;
+  background: #f9fafb;
+  border: 3px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1f2937;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-align: center;
+}
+
+.option-button:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+  transform: translateX(8px);
+}
+
+.option-button.selected {
+  background: #6B46C1;
+  border-color: #6B46C1;
+  color: white;
+  transform: translateX(8px) scale(1.02);
+}
+
+/* Complete Button */
+.complete-button {
+  margin-top: 24px;
+  padding: 20px 48px;
+  background: linear-gradient(135deg, #6B46C1, #8b5cf6);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 10px 30px rgba(107, 70, 193, 0.3);
+}
+
+.complete-button:hover:not(:disabled) {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(107, 70, 193, 0.4);
+}
+
+.complete-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Back Button */
+.back-button {
+  margin-top: 24px;
+  padding: 12px 24px;
+  background: #f3f4f6;
+  color: #6b7280;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.back-button:hover {
+  background: #e5e7eb;
+  color: #1f2937;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .finder-content {
+    padding: 32px 20px;
+    border-radius: 16px;
+  }
+
+  .step-title {
+    font-size: 24px;
+  }
+
+  .options-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .option-card {
+    padding: 20px 12px;
+  }
+
+  .option-emoji {
+    font-size: 32px;
+  }
+
+  .option-label {
+    font-size: 13px;
+  }
+
+  .progress-bar {
+    margin-bottom: 32px;
+  }
+
+  .progress-step {
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
+
+  .complete-button {
+    width: 100%;
+    font-size: 16px;
+  }
+}

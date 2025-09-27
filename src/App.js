@@ -3,8 +3,11 @@ import { getGifts as getGiftsWithFallback } from './api/gifts';
 import './styles/App.css';
 import './styles/SimpleFilterBar.css';
 import './styles/GiftCard.css';
+import './styles/Hero.css';
+import './styles/QuickGiftFinder.css';
 
 import Hero from './components/Hero';
+import QuickGiftFinder from './components/QuickGiftFinder';
 import SimpleFilterBar from './components/SimpleFilterBar';
 import GiftGrid from './components/GiftGrid';
 import LoadingSpinner from './components/LoadingSpinner';
@@ -19,6 +22,8 @@ function App() {
   const [selectedGift, setSelectedGift] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showFinder, setShowFinder] = useState(false);
+  const [showResults, setShowResults] = useState(false);
   const [filters, setFilters] = useState({
     category: '',
     minPrice: '',
@@ -66,6 +71,36 @@ function App() {
     window.location.href = `/products/${gift.id}`;
   };
 
+  const handleScenarioSelect = async (scenario) => {
+    if (scenario === 'wizard') {
+      setShowFinder(true);
+    } else if (scenario === 'browse') {
+      setShowResults(true);
+      window.scrollTo({ top: document.querySelector('.simple-filter-bar')?.offsetTop - 20, behavior: 'smooth' });
+    } else {
+      // Quick filter for specific occasions
+      setShowResults(true);
+      await handleFilterChange({ ...filters, search: scenario });
+      window.scrollTo({ top: document.querySelector('.simple-filter-bar')?.offsetTop - 20, behavior: 'smooth' });
+    }
+  };
+
+  const handleFinderComplete = async (finderFilters) => {
+    setShowFinder(false);
+    setShowResults(true);
+
+    // Apply filters from wizard
+    const newFilters = {
+      category: finderFilters.interests[0] || '',
+      minPrice: finderFilters.minPrice,
+      maxPrice: finderFilters.maxPrice,
+      search: finderFilters.occasion
+    };
+
+    await handleFilterChange(newFilters);
+    window.scrollTo({ top: document.querySelector('.simple-filter-bar')?.offsetTop - 20, behavior: 'smooth' });
+  };
+
   const pathname = window.location.pathname;
 
   if (pathname && pathname.startsWith('/gift-finder')) {
@@ -97,16 +132,28 @@ function App() {
 
   return (
     <div className="app-container">
-      <Hero />
-      <SimpleFilterBar
-        filters={filters}
-        onFilterChange={handleFilterChange}
-      />
-      <ResultsSummary count={gifts.length} total={allGifts.length} />
-      <GiftGrid
-        gifts={gifts}
-        onGiftClick={handleGiftClick}
-      />
+      <Hero onScenarioSelect={handleScenarioSelect} />
+
+      {showFinder && (
+        <QuickGiftFinder
+          onComplete={handleFinderComplete}
+          onClose={() => setShowFinder(false)}
+        />
+      )}
+
+      {showResults && (
+        <>
+          <SimpleFilterBar
+            filters={filters}
+            onFilterChange={handleFilterChange}
+          />
+          <ResultsSummary count={gifts.length} total={allGifts.length} />
+          <GiftGrid
+            gifts={gifts}
+            onGiftClick={handleGiftClick}
+          />
+        </>
+      )}
     </div>
   );
 }
