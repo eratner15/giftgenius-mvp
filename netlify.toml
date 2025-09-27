@@ -1,6 +1,6 @@
 [build]
   publish = "build"
-  command = "CI=false npm run build"
+  command = "npm run build"
 
 [build.processing]
   skip_processing = false
@@ -12,6 +12,8 @@
 
 [build.environment]
   NODE_VERSION = "18"
+  CI = "false"
+  GENERATE_SOURCEMAP = "false"
 
 [[headers]]
   for = "/static/*"

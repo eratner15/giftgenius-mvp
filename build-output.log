@@ -1,0 +1,60 @@
+
+> giftgenius-frontend@0.1.0 build
+> react-scripts build
+
+Creating an optimized production build...
+Compiled with warnings.
+
+[eslint] 
+src/components/CameraIntegration.js
+  Line 180:10:  'error' is assigned a value but never used  no-unused-vars
+
+src/components/GiftListCollaboration.js
+  Line 1:38:  'useCallback' is defined but never used  no-unused-vars
+
+src/components/GiftReminders.js
+  Line 164:10:  'reminders' is assigned a value but never used  no-unused-vars
+
+src/components/PremiumFeatures.js
+  Line 1:27:    'useEffect' is defined but never used                  no-unused-vars
+  Line 512:25:  'setAnalyticsData' is assigned a value but never used  no-unused-vars
+
+src/components/ProductDetailView.js
+  Line 2:22:  'fetchGifts' is defined but never used  no-unused-vars
+
+src/components/TouchGestures.js
+  Line 1:27:  'useEffect' is defined but never used  no-unused-vars
+
+src/components/ViralChallenges.js
+  Line 458:9:  The 'allAchievements' array makes the dependencies of useEffect Hook (at line 477) change on every render. To fix this, wrap the initialization of 'allAchievements' in its own useMemo() Hook  react-hooks/exhaustive-deps
+
+Search for the keywords to learn more about each warning.
+To ignore, add // eslint-disable-next-line to the line before.
+
+File sizes after gzip:
+
+  63.71 kB  build/static/js/main.c75b4e6e.js
+  18.36 kB  build/static/css/main.9b4cbc9c.css
+  9.92 kB   build/static/js/652.b1b6aaaa.chunk.js
+  4.51 kB   build/static/js/247.33f3ad7e.chunk.js
+  4.47 kB   build/static/js/818.63518097.chunk.js
+  4.02 kB   build/static/js/264.944eb5c2.chunk.js
+  4.01 kB   build/static/js/915.84b4a226.chunk.js
+  3.71 kB   build/static/js/514.4be11b25.chunk.js
+  3.65 kB   build/static/js/38.7180d489.chunk.js
+  3.29 kB   build/static/js/167.febcdeca.chunk.js
+  3.1 kB    build/static/js/384.9b2afd8d.chunk.js
+
+The project was built assuming it is hosted at /.
+You can control this with the homepage field in your package.json.
+
+The build folder is ready to be deployed.
+You may serve it with a static server:
+
+  npm install -g serve
+  serve -s build
+
+Find out more about deployment here:
+
+  https://cra.link/deployment
+
