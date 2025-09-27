@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/giftgenius-mvp/static/css/main.9b4cbc9c.css",
-    "main.js": "/giftgenius-mvp/static/js/main.5a4bae38.js",
+    "main.js": "/giftgenius-mvp/static/js/main.a2abb412.js",
     "static/js/652.b1b6aaaa.chunk.js": "/giftgenius-mvp/static/js/652.b1b6aaaa.chunk.js",
     "static/js/38.7180d489.chunk.js": "/giftgenius-mvp/static/js/38.7180d489.chunk.js",
     "static/js/167.febcdeca.chunk.js": "/giftgenius-mvp/static/js/167.febcdeca.chunk.js",
@@ -13,7 +13,7 @@
     "static/js/818.63518097.chunk.js": "/giftgenius-mvp/static/js/818.63518097.chunk.js",
     "index.html": "/giftgenius-mvp/index.html",
     "main.9b4cbc9c.css.map": "/giftgenius-mvp/static/css/main.9b4cbc9c.css.map",
-    "main.5a4bae38.js.map": "/giftgenius-mvp/static/js/main.5a4bae38.js.map",
+    "main.a2abb412.js.map": "/giftgenius-mvp/static/js/main.a2abb412.js.map",
     "652.b1b6aaaa.chunk.js.map": "/giftgenius-mvp/static/js/652.b1b6aaaa.chunk.js.map",
     "38.7180d489.chunk.js.map": "/giftgenius-mvp/static/js/38.7180d489.chunk.js.map",
     "167.febcdeca.chunk.js.map": "/giftgenius-mvp/static/js/167.febcdeca.chunk.js.map",
@@ -26,6 +26,6 @@
   },
   "entrypoints": [
     "static/css/main.9b4cbc9c.css",
-    "static/js/main.5a4bae38.js"
+    "static/js/main.a2abb412.js"
   ]
 }

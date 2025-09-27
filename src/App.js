@@ -474,11 +474,14 @@ function App() {
 
   // Routing logic - AFTER all hooks
   const pathname = window.location.pathname;
-  if (pathname && pathname.startsWith('/gift-finder')) {
+  const basePath = process.env.NODE_ENV === 'production' ? '/giftgenius-mvp' : '';
+  const normalizedPath = pathname.replace(basePath, '') || '/';
+
+  if (normalizedPath && normalizedPath.startsWith('/gift-finder')) {
     return <GiftFinderWizard />;
   }
-  if (pathname && pathname.startsWith('/products/')) {
-    const id = pathname.split('/').pop();
+  if (normalizedPath && normalizedPath.startsWith('/products/')) {
+    const id = normalizedPath.split('/').pop();
     return <ProductDetailView id={id} />;
   }
 
@@ -539,7 +542,8 @@ function App() {
   };
 
   const handleGiftClick = (gift) => {
-   window.location.href = `/products/${gift.id}`;
+   const basePath = process.env.NODE_ENV === 'production' ? '/giftgenius-mvp' : '';
+   window.location.href = `${basePath}/products/${gift.id}`;
 
 
     // Track gift view for analytics
