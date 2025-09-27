@@ -2,7 +2,7 @@ import React from 'react';
 import GiftCard from './GiftCard';
 
 const GiftGrid = ({
-  gifts,
+  gifts = [],
   loading,
   onGiftClick,
   sortBy,
@@ -27,7 +27,7 @@ const GiftGrid = ({
     );
   }
 
-  if (gifts.length === 0) {
+  if (!gifts || gifts.length === 0) {
     return (
       <div className="empty-state">
         <div className="empty-icon">🔍</div>
@@ -87,7 +87,7 @@ const GiftGrid = ({
 
       {/* Gift Grid */}
       <div className="gift-grid">
-        {gifts.map(gift => (
+        {gifts && gifts.map(gift => (
           <GiftCard
             key={gift.id}
             gift={gift}
