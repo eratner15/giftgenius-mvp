@@ -644,7 +644,7 @@ export const TouchModal = ({
   );
 };
 
-export default {
+const TouchGesturesExports = {
   useTouchGestures,
   SwipeableGiftCard,
   TouchButton,
@@ -652,3 +652,5 @@ export default {
   TouchSlider,
   TouchModal
 };
+
+export default TouchGesturesExports;

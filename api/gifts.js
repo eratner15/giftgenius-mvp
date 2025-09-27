@@ -1,88 +1,167 @@
-// Vercel serverless function for gifts API - Static data version
+const { db } = require('./_shared/database');
+const { setCorsHeaders } = require('./_shared/cors');
+const { validateGiftQueryParams } = require('./_shared/validation');
 
-module.exports = (req, res) => {
-      // Set CORS headers
-      res.setHeader('Access-Control-Allow-Origin', '*');
-      res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-      res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+export default function handler(req, res) {
+  // Handle CORS
+  if (setCorsHeaders(req, res)) {
+    return; // Preflight request was handled
+  }
 
-      if (req.method === 'OPTIONS') {
-              return res.status(200).end();
-      }
+  const startTime = Date.now();
+  const { method, query } = req;
 
-      // Static gift data
-      const allGifts = [
-          {
-                    id: 1,
-                    title: 'Luxury Silk Pillowcase Set',
-                    description: '100% Mulberry silk pillowcases for better sleep and skincare',
-                    price: 89.99,
-                    category: 'home',
-                    occasion: 'anniversary',
-                    image_url: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400',
-                    success_rate: 94
-          },
-          {
-                    id: 2,
-                    title: 'LED Mirror Jewelry Organizer',
-                    description: 'Elegant jewelry box with LED lighting and smart compartments',
-                    price: 79.99,
-                    category: 'jewelry',
-                    occasion: 'birthday',
-                    image_url: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400',
-                    success_rate: 88
-          },
-          {
-                    id: 3,
-                    title: 'Custom Night Sky Star Map',
-                    description: 'Capture the stars from your special night - first date, wedding, anniversary',
-                    price: 59.99,
-                    category: 'unique',
-                    occasion: 'anniversary',
-                    image_url: 'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=400',
-                    success_rate: 92
-          },
-          {
-                    id: 4,
-                    title: 'Designer Fragrance Sampler',
-                    description: 'Collection of 10 luxury perfume samples with certificate',
-                    price: 75.00,
-                    category: 'beauty',
-                    occasion: 'birthday',
-                    image_url: 'https://images.unsplash.com/photo-1541643600914-78b084683601?w=400',
-                    success_rate: 91
-          },
-          {
-                    id: 5,
-                    title: 'WiFi Digital Photo Frame',
-                    description: 'Share photos instantly from anywhere - perfect for memories',
-                    price: 199.99,
-                    category: 'tech',
-                    occasion: 'valentine',
-                    image_url: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400',
-                    success_rate: 93
-          }
-            ];
+  try {
+    if (method === 'GET') {
+      return handleGetGifts(req, res, startTime);
+    } else {
+      res.status(405).json({
+        error: 'Method not allowed',
+        message: `${method} method is not supported for this endpoint`,
+        allowed_methods: ['GET']
+      });
+    }
+  } catch (error) {
+    console.error('API Error:', error);
 
-      // Apply filters from query parameters
-      const { category, occasion, minPrice, maxPrice } = req.query;
-      let filteredGifts = [...allGifts];
+    const processingTime = Date.now() - startTime;
 
-      if (occasion) {
-              filteredGifts = filteredGifts.filter(gift => gift.occasion === occasion);
-      }
+    res.status(500).json({
+      error: 'Internal server error',
+      message: 'An unexpected error occurred',
+      processing_time_ms: processingTime,
+      timestamp: new Date().toISOString(),
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+}
 
-      if (category) {
-              filteredGifts = filteredGifts.filter(gift => gift.category === category);
-      }
+function handleGetGifts(req, res, startTime) {
+  const validated = validateGiftQueryParams(req.query);
 
-      if (minPrice) {
-              filteredGifts = filteredGifts.filter(gift => gift.price >= parseFloat(minPrice));
-      }
+  console.log('GET /api/gifts', {
+    query: validated,
+    origin: req.headers.origin,
+    userAgent: req.headers['user-agent']?.slice(0, 100),
+    timestamp: new Date().toISOString()
+  });
 
-      if (maxPrice) {
-              filteredGifts = filteredGifts.filter(gift => gift.price <= parseFloat(maxPrice));
-      }
+  try {
+    let sqlQuery = 'SELECT * FROM gifts WHERE 1=1';
+    const params = [];
 
-      res.status(200).json({ gifts: filteredGifts });
-};
+    if (validated.category) {
+      sqlQuery += ' AND category = ?';
+      params.push(validated.category);
+    }
+
+    if (validated.minPrice !== undefined) {
+      sqlQuery += ' AND price >= ?';
+      params.push(validated.minPrice);
+    }
+
+    if (validated.maxPrice !== undefined) {
+      sqlQuery += ' AND price <= ?';
+      params.push(validated.maxPrice);
+    }
+
+    if (validated.minSuccessRate !== undefined) {
+      sqlQuery += ' AND success_rate >= ?';
+      params.push(validated.minSuccessRate);
+    }
+
+    if (validated.search) {
+      sqlQuery += ' AND (title LIKE ? OR description LIKE ?)';
+      const searchPattern = `%${validated.search}%`;
+      params.push(searchPattern, searchPattern);
+    }
+
+    // Add ordering and pagination
+    sqlQuery += ' ORDER BY success_rate DESC, total_reviews DESC';
+
+    if (validated.limit) {
+      sqlQuery += ' LIMIT ?';
+      params.push(validated.limit);
+    }
+
+    if (validated.offset) {
+      sqlQuery += ' OFFSET ?';
+      params.push(validated.offset);
+    }
+
+    const stmt = db.prepare(sqlQuery);
+    const gifts = stmt.all(...params);
+
+    let countQuery = 'SELECT COUNT(*) as total FROM gifts WHERE 1=1';
+    const countParams = [];
+
+    if (validated.category) {
+      countQuery += ' AND category = ?';
+      countParams.push(validated.category);
+    }
+
+    if (validated.minPrice !== undefined) {
+      countQuery += ' AND price >= ?';
+      countParams.push(validated.minPrice);
+    }
+
+    if (validated.maxPrice !== undefined) {
+      countQuery += ' AND price <= ?';
+      countParams.push(validated.maxPrice);
+    }
+
+    if (validated.minSuccessRate !== undefined) {
+      countQuery += ' AND success_rate >= ?';
+      countParams.push(validated.minSuccessRate);
+    }
+
+    if (validated.search) {
+      countQuery += ' AND (title LIKE ? OR description LIKE ?)';
+      const searchPattern = `%${validated.search}%`;
+      countParams.push(searchPattern, searchPattern);
+    }
+
+    const countStmt = db.prepare(countQuery);
+    const { total } = countStmt.get(...countParams);
+
+    const processingTime = Date.now() - startTime;
+
+    // Return the results
+    const response = {
+      gifts,
+      pagination: {
+        total,
+        count: gifts.length,
+        limit: validated.limit,
+        offset: validated.offset,
+        has_more: validated.offset + gifts.length < total
+      },
+      filters: {
+        category: validated.category,
+        minPrice: validated.minPrice,
+        maxPrice: validated.maxPrice,
+        minSuccessRate: validated.minSuccessRate,
+        search: validated.search
+      },
+      processing_time_ms: processingTime,
+      timestamp: new Date().toISOString()
+    };
+
+    console.log(`✅ Query successful: ${gifts.length} gifts returned in ${processingTime}ms`);
+
+    res.status(200).json(response);
+
+  } catch (error) {
+    console.error('Database query error:', error);
+
+    const processingTime = Date.now() - startTime;
+
+    res.status(500).json({
+      error: 'Database error',
+      message: 'Failed to fetch gifts from database',
+      processing_time_ms: processingTime,
+      timestamp: new Date().toISOString(),
+      details: process.env.NODE_ENV === 'development' ? error.message : 'Please try again later'
+    });
+  }
+}

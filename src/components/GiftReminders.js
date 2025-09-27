@@ -534,8 +534,10 @@ export const ReminderNotifications = ({ reminderManager, onDismiss, onAction }) 
   );
 };
 
-export default {
+const GiftRemindersExports = {
   GiftReminderManager,
   GiftReminderDashboard,
   ReminderNotifications
 };
+
+export default GiftRemindersExports;

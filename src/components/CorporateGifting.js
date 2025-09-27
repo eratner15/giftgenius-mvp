@@ -768,7 +768,9 @@ const ProgramDetailModal = ({ program, onClose, onCreateOrder }) => {
   );
 };
 
-export default {
+const CorporateGiftingExports = {
   CorporateGiftingManager,
   CorporateGiftingDashboard
 };
+
+export default CorporateGiftingExports;

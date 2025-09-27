@@ -1,36 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-use-before-define */
-import React, { useState, useEffect, useCallback } from 'react';
-import Hero from './components/Hero';
-import FilterBar from './components/FilterBar';
-import GiftGrid from './components/GiftGrid';
-import TestimonialModal from './components/TestimonialModal';
-import LoadingSpinner from './components/LoadingSpinner';
-import ErrorMessage from './components/ErrorMessage';
-import ResultsSummary from './components/ResultsSummary';
-import { MobileGiftWizard } from './components/MobileWizard';
-import { CameraScanner, QuickScanButton } from './components/CameraIntegration';
-import { TouchButton, PullToRefresh } from './components/TouchGestures';
-import { ShareModal, SocialProofTicker, ReferralWidget } from './components/SocialSharing';
-import { CollaborativeGiftList } from './components/GiftListCollaboration';
-import { ViralChallengeCard, ChallengeLeaderboard, AchievementGallery, GamificationProgress } from './components/ViralChallenges';
-import {
-  PremiumSubscriptionManager,
-  SubscriptionUpgradeModal,
-  PremiumFeatureGate,
-  PersonalGiftConcierge,
-  PremiumAnalyticsDashboard
-} from './components/PremiumFeatures';
-import {
-  GiftReminderManager,
-  GiftReminderDashboard,
-  ReminderNotifications
-} from './components/GiftReminders';
-import {
-  CorporateGiftingManager,
-  CorporateGiftingDashboard
-} from './components/CorporateGifting';
-import { getGifts, getGifts as getGiftsWithFallback } from './api/gifts';
+import React, { useState, useEffect, useCallback, lazy, Suspense } from 'react';
+import { getGifts as getGiftsWithFallback } from './api/gifts';
 import { UserAnalytics, RecommendationEngine, SocialProofManager } from './utils/analytics';
 import { offlineManager, saveOffline } from './utils/offlineSync';
 import { useToast } from './utils/toast';
@@ -42,6 +13,36 @@ import './styles/SocialViral.css';
 import './styles/PremiumFeatures.css';
 import ProductDetailView from './components/ProductDetailView';
 import GiftFinderWizard from './components/GiftFinderWizard';
+
+import Hero from './components/Hero';
+import FilterBar from './components/FilterBar';
+import GiftGrid from './components/GiftGrid';
+import TestimonialModal from './components/TestimonialModal';
+import LoadingSpinner from './components/LoadingSpinner';
+import ErrorMessage from './components/ErrorMessage';
+import ResultsSummary from './components/ResultsSummary';
+
+const MobileGiftWizard = lazy(() => import('./components/MobileWizard').then(module => ({ default: module.MobileGiftWizard })));
+const CameraScanner = lazy(() => import('./components/CameraIntegration').then(module => ({ default: module.CameraScanner })));
+const QuickScanButton = lazy(() => import('./components/CameraIntegration').then(module => ({ default: module.QuickScanButton })));
+const TouchButton = lazy(() => import('./components/TouchGestures').then(module => ({ default: module.TouchButton })));
+const PullToRefresh = lazy(() => import('./components/TouchGestures').then(module => ({ default: module.PullToRefresh })));
+const ShareModal = lazy(() => import('./components/SocialSharing').then(module => ({ default: module.ShareModal })));
+const SocialProofTicker = lazy(() => import('./components/SocialSharing').then(module => ({ default: module.SocialProofTicker })));
+const CollaborativeGiftList = lazy(() => import('./components/GiftListCollaboration').then(module => ({ default: module.CollaborativeGiftList })));
+const ChallengeLeaderboard = lazy(() => import('./components/ViralChallenges').then(module => ({ default: module.ChallengeLeaderboard })));
+const AchievementGallery = lazy(() => import('./components/ViralChallenges').then(module => ({ default: module.AchievementGallery })));
+const GamificationProgress = lazy(() => import('./components/ViralChallenges').then(module => ({ default: module.GamificationProgress })));
+const PremiumSubscriptionManager = lazy(() => import('./components/PremiumFeatures').then(module => ({ default: module.PremiumSubscriptionManager })));
+const SubscriptionUpgradeModal = lazy(() => import('./components/PremiumFeatures').then(module => ({ default: module.SubscriptionUpgradeModal })));
+const PremiumFeatureGate = lazy(() => import('./components/PremiumFeatures').then(module => ({ default: module.PremiumFeatureGate })));
+const PersonalGiftConcierge = lazy(() => import('./components/PremiumFeatures').then(module => ({ default: module.PersonalGiftConcierge })));
+const PremiumAnalyticsDashboard = lazy(() => import('./components/PremiumFeatures').then(module => ({ default: module.PremiumAnalyticsDashboard })));
+const GiftReminderManager = lazy(() => import('./components/GiftReminders').then(module => ({ default: module.GiftReminderManager })));
+const GiftReminderDashboard = lazy(() => import('./components/GiftReminders').then(module => ({ default: module.GiftReminderDashboard })));
+const ReminderNotifications = lazy(() => import('./components/GiftReminders').then(module => ({ default: module.ReminderNotifications })));
+const CorporateGiftingManager = lazy(() => import('./components/CorporateGifting').then(module => ({ default: module.CorporateGiftingManager })));
+const CorporateGiftingDashboard = lazy(() => import('./components/CorporateGifting').then(module => ({ default: module.CorporateGiftingDashboard })));
 
 function App() {
     const pathname = window.location.pathname;

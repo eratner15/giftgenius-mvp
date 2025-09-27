@@ -561,9 +561,11 @@ export const QuickScanButton = ({ onScanStart, className = '' }) => {
   );
 };
 
-export default {
+const CameraIntegrationExports = {
   CameraScanner,
   QuickScanButton,
   useCameraCapabilities,
   useImageAnalysis
 };
+
+export default CameraIntegrationExports;

@@ -530,11 +530,10 @@ export class OfflineDataManager {
 
         if (store.indexNames.contains('timestamp')) {
           const index = store.index('timestamp');
-          const cursor = await index.openCursor(IDBKeyRange.upperBound(cutoffTime));
+          let cursor = await index.openCursor(IDBKeyRange.upperBound(cutoffTime));
 
           let deletedCount = 0;
           while (cursor) {
-            // Only delete synced items or non-critical data
             if (cursor.value.synced || storeName === STORES.cachedGifts) {
               await cursor.delete();
               deletedCount++;

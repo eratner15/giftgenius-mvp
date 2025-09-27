@@ -665,10 +665,12 @@ export const PremiumAnalyticsDashboard = ({ subscriptionManager }) => {
   );
 };
 
-export default {
+const PremiumFeaturesExports = {
   PremiumSubscriptionManager,
   SubscriptionUpgradeModal,
   PremiumFeatureGate,
   PersonalGiftConcierge,
   PremiumAnalyticsDashboard
 };
+
+export default PremiumFeaturesExports;

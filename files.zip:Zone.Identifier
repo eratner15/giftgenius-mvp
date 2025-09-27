@@ -1,0 +1,4 @@
+[ZoneTransfer]
+ZoneId=3
+ReferrerUrl=https://claude.ai/chat/1bee70bf-9edd-4fd6-ac3f-85c5114e4382
+HostUrl=https://claude.ai/api/organizations/c0f1ae3d-e995-47ee-bec4-4fe2a5b01c8e/conversations/1bee70bf-9edd-4fd6-ac3f-85c5114e4382/wiggle/download-files?paths=%2Fmnt%2Fuser-data%2Foutputs%2Fimproved-giftgenius-frontend.html&paths=%2Fmnt%2Fuser-data%2Foutputs%2Fbackend-enhancements.js&paths=%2Fmnt%2Fuser-data%2Foutputs%2FDEPLOYMENT_GUIDE.md

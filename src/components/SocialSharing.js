@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 
 // Social Sharing Manager
 export class SocialSharingManager {
@@ -139,7 +139,7 @@ export const SocialShareButton = ({
   showLabel = false
 }) => {
   const [isSharing, setIsSharing] = useState(false);
-  const sharingManager = new SocialSharingManager();
+  const sharingManager = useMemo(() => new SocialSharingManager(), []);
 
   const handleShare = useCallback(async () => {
     setIsSharing(true);
@@ -559,7 +559,7 @@ export const ReferralWidget = ({ userId, onReferralSuccess }) => {
   );
 };
 
-export default {
+const SocialSharingExports = {
   SocialSharingManager,
   SocialShareButton,
   ShareModal,
@@ -567,3 +567,5 @@ export default {
   GiftSuccessStory,
   ReferralWidget
 };
+
+export default SocialSharingExports;

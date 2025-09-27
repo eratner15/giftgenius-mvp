@@ -1,9 +1,27 @@
-// Vercel serverless function for health check
+const { setCorsHeaders } = require('./_shared/cors');
 
-module.exports = (req, res) => {
-    // Set CORS headers
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Content-Type', 'application/json');
+export default function handler(req, res) {
+  // Handle CORS
+  if (setCorsHeaders(req, res)) {
+    return; // Preflight request was handled
+  }
 
-    res.status(200).json({ status: 'OK', message: 'GiftGenius API is running' });
-};
+  try {
+    res.status(200).json({
+      status: 'healthy',
+      message: 'GiftGenius API is operational',
+      timestamp: new Date().toISOString(),
+      version: '1.0.0',
+      uptime: process.uptime ? process.uptime() : null
+    });
+  } catch (error) {
+    console.error('Health check error:', error);
+
+    res.status(500).json({
+      status: 'error',
+      message: 'Health check failed',
+      timestamp: new Date().toISOString(),
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+    });
+  }
+}

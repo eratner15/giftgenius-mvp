@@ -658,8 +658,10 @@ export const ListActivityFeed = ({ listId }) => {
   );
 };
 
-export default {
+const GiftListCollaborationExports = {
   CollaborationManager,
   CollaborativeGiftList,
   ListActivityFeed
 };
+
+export default GiftListCollaborationExports;

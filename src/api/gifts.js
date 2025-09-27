@@ -1,7 +1,7 @@
 // API Service Layer for GiftGenius Backend
 const API_BASE_URL = process.env.REACT_APP_API_URL ||
   (process.env.NODE_ENV === 'production'
-    ? 'https://api-74vqh9434-eratner15s-projects.vercel.app' // Updated production API
+    ? 'https://api-876makour-eratner15s-projects.vercel.app' // New Vercel functions API
     : 'http://localhost:3001'); // Local development
 
 class ApiService {

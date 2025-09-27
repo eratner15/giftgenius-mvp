@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 
 // Viral Challenge Manager
 export class ChallengeManager {
@@ -206,7 +206,7 @@ export const ViralChallengeCard = ({ challenge, userId, onJoin, onShare }) => {
   const [isJoined, setIsJoined] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
 
-  const manager = new ChallengeManager();
+  const manager = useMemo(() => new ChallengeManager(), []);
 
   useEffect(() => {
     manager.loadProgress();
@@ -215,7 +215,7 @@ export const ViralChallengeCard = ({ challenge, userId, onJoin, onShare }) => {
       setProgress(userProgress);
       setIsJoined(true);
     }
-  }, [userId, challenge.id]);
+  }, [userId, challenge.id, manager]);
 
   const handleJoin = () => {
     const newProgress = manager.joinChallenge(challenge.id, userId);
@@ -368,13 +368,12 @@ export const ViralChallengeCard = ({ challenge, userId, onJoin, onShare }) => {
 export const ChallengeLeaderboard = ({ challengeId, currentUserId }) => {
   const [leaderboard, setLeaderboard] = useState([]);
   const [timeFilter, setTimeFilter] = useState('all');
-  const manager = new ChallengeManager();
+  const manager = useMemo(() => new ChallengeManager(), []);
 
   useEffect(() => {
     manager.loadProgress();
     const entries = manager.getLeaderboard(challengeId);
 
-    // Add mock user data for display
     const enrichedEntries = entries.map((entry, index) => ({
       ...entry,
       username: `User${entry.userId.substring(0, 4)}`,
@@ -384,7 +383,7 @@ export const ChallengeLeaderboard = ({ challengeId, currentUserId }) => {
     }));
 
     setLeaderboard(enrichedEntries);
-  }, [challengeId, timeFilter]);
+  }, [challengeId, timeFilter, manager]);
 
   return (
     <div className="challenge-leaderboard">
@@ -468,7 +467,6 @@ export const AchievementGallery = ({ userId }) => {
   ];
 
   useEffect(() => {
-    // Filter based on category
     let filtered = allAchievements;
     if (selectedCategory === 'earned') {
       filtered = allAchievements.filter(a => a.earned);
@@ -476,7 +474,7 @@ export const AchievementGallery = ({ userId }) => {
       filtered = allAchievements.filter(a => !a.earned);
     }
     setAchievements(filtered);
-  }, [selectedCategory]);
+  }, [selectedCategory, allAchievements]);
 
   const getRarityColor = (rarity) => {
     const colors = {
@@ -603,10 +601,12 @@ export const GamificationProgress = ({ userId }) => {
   );
 };
 
-export default {
+const ViralChallengesExports = {
   ChallengeManager,
   ViralChallengeCard,
   ChallengeLeaderboard,
   AchievementGallery,
   GamificationProgress
 };
+
+export default ViralChallengesExports;
