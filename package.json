@@ -2,6 +2,7 @@
   "name": "giftgenius-frontend",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://eratner15.github.io/giftgenius-mvp",
   "dependencies": {
     "axios": "^1.3.0",
     "idb": "^8.0.3",
