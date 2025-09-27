@@ -1,0 +1,112 @@
+{
+  "short_name": "GiftGenius",
+  "name": "GiftGenius - AI Gift Recommendations",
+  "description": "Discover perfect gifts with AI-powered recommendations tailored to every recipient",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🎁%3C/text%3E%3C/svg%3E",
+      "sizes": "72x72",
+      "type": "image/svg+xml",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🎁%3C/text%3E%3C/svg%3E",
+      "sizes": "96x96",
+      "type": "image/svg+xml",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🎁%3C/text%3E%3C/svg%3E",
+      "sizes": "128x128",
+      "type": "image/svg+xml",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🎁%3C/text%3E%3C/svg%3E",
+      "sizes": "144x144",
+      "type": "image/svg+xml",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🎁%3C/text%3E%3C/svg%3E",
+      "sizes": "152x152",
+      "type": "image/svg+xml",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🎁%3C/text%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🎁%3C/text%3E%3C/svg%3E",
+      "sizes": "384x384",
+      "type": "image/svg+xml",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🎁%3C/text%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable any"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#ffffff",
+  "theme_color": "#6366F1",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "categories": ["lifestyle", "shopping", "entertainment"],
+  "lang": "en-US",
+  "dir": "ltr",
+  "display_override": ["window-controls-overlay", "minimal-ui"],
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "protocol_handlers": [
+    {
+      "protocol": "web+giftgenius",
+      "url": "/share?url=%s"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Quick Search",
+      "short_name": "Search",
+      "description": "Search for the perfect gift",
+      "url": "/?search=true",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🔍%3C/text%3E%3C/svg%3E",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Anniversary Gifts",
+      "short_name": "Anniversary",
+      "description": "Find perfect anniversary gifts",
+      "url": "/?occasion=anniversary",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E💖%3C/text%3E%3C/svg%3E",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Birthday Gifts",
+      "short_name": "Birthday",
+      "description": "Browse birthday gift ideas",
+      "url": "/?occasion=birthday",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🎂%3C/text%3E%3C/svg%3E",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ]
+}
