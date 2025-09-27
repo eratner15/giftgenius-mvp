@@ -41,13 +41,19 @@ import './styles/MobileExcellence.css';
 import './styles/SocialViral.css';
 import './styles/PremiumFeatures.css';
 import ProductDetailView from './components/ProductDetailView';
+import GiftFinderWizard from './components/GiftFinderWizard';
 
 function App() {
     const pathname = window.location.pathname;
-  if (pathname && pathname.startsWith('/products/')) {
-    const id = pathname.split('/').pop();
-    return <ProductDetailView id={id} />;
-    }
+  if (pathname && pathname.startsWith('/gift-finder')) {
+    return <GiftFinderWizard />;
+  }
+
+    
+ if (pathname && pathname.startsWith('/products/')) {
+  const id = pathname.split('/').pop();
+  return <ProductDetailView id={id} />;
+}
   // State management
   const [gifts, setGifts] = useState([]);
   const [allGifts, setAllGifts] = useState([]);
@@ -68,6 +74,7 @@ function App() {
   // Level 5: Social & Viral states
   const [showSocialSharing, setShowSocialSharing] = useState(false);
   const [showCollaboration, setShowCollaboration] = useState(false);
+ 
   const [showChallenges, setShowChallenges] = useState(false);
   const [showAchievements, setShowAchievements] = useState(false);
   const [shareData, setShareData] = useState(null);
@@ -531,12 +538,8 @@ function App() {
   };
 
   const handleGiftClick = (gift) => {
-    setSelectedGift(gift);
-    if (analytics) {
-      analytics.trackGiftView(gift.id, 2000);
-      analytics.trackCategoryInterest(gift.category);
-      analytics.trackPriceInterest(gift.price);
-    }
+   window.location.href = `/products/${gift.id}`;
+
 
     // Track gift view for analytics
   };
