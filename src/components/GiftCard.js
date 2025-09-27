@@ -1,16 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 const GiftCard = ({ gift, onClick, analytics, recommendationEngine }) => {
+  // Image loading states
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
+
+  const handleImageLoad = () => setImageLoaded(true);
+  const handleImageError = () => setImageError(true);
+
   const handleClick = () => {
     if (analytics) {
       analytics.trackGiftView(gift.id);
-        // Image loading states
-        const [imageLoaded, setImageLoaded] = useState(false);
-        const [imageError, setImageError] = useState(false);
-
-        const handleImageLoad = () => setImageLoaded(true);
-        const handleImageError = () => setImageError(true);
-      
       analytics.trackCategoryInterest(gift.category);
       analytics.trackPriceInterest(gift.price);
     }

@@ -11,8 +11,6 @@ import './styles/ComponentEnhancements.css';
 import './styles/MobileExcellence.css';
 import './styles/SocialViral.css';
 import './styles/PremiumFeatures.css';
-import ProductDetailView from './components/ProductDetailView';
-import GiftFinderWizard from './components/GiftFinderWizard';
 
 import Hero from './components/Hero';
 import FilterBar from './components/FilterBar';
@@ -21,6 +19,8 @@ import TestimonialModal from './components/TestimonialModal';
 import LoadingSpinner from './components/LoadingSpinner';
 import ErrorMessage from './components/ErrorMessage';
 import ResultsSummary from './components/ResultsSummary';
+import ProductDetailView from './components/ProductDetailView';
+import GiftFinderWizard from './components/GiftFinderWizard';
 
 const MobileGiftWizard = lazy(() => import('./components/MobileWizard').then(module => ({ default: module.MobileGiftWizard })));
 const CameraScanner = lazy(() => import('./components/CameraIntegration').then(module => ({ default: module.CameraScanner })));
@@ -45,17 +45,7 @@ const CorporateGiftingManager = lazy(() => import('./components/CorporateGifting
 const CorporateGiftingDashboard = lazy(() => import('./components/CorporateGifting').then(module => ({ default: module.CorporateGiftingDashboard })));
 
 function App() {
-    const pathname = window.location.pathname;
-  if (pathname && pathname.startsWith('/gift-finder')) {
-    return <GiftFinderWizard />;
-  }
-
-    
- if (pathname && pathname.startsWith('/products/')) {
-  const id = pathname.split('/').pop();
-  return <ProductDetailView id={id} />;
-}
-  // State management
+  // State management - MUST be before any returns
   const [gifts, setGifts] = useState([]);
   const [allGifts, setAllGifts] = useState([]);
   const [selectedGift, setSelectedGift] = useState(null);
@@ -481,6 +471,16 @@ function App() {
       // return () => clearInterval(activityInterval);
     }
   }, [socialProof, allGifts]);
+
+  // Routing logic - AFTER all hooks
+  const pathname = window.location.pathname;
+  if (pathname && pathname.startsWith('/gift-finder')) {
+    return <GiftFinderWizard />;
+  }
+  if (pathname && pathname.startsWith('/products/')) {
+    const id = pathname.split('/').pop();
+    return <ProductDetailView id={id} />;
+  }
 
   const getCategoryIcon = (category) => {
     const icons = {
