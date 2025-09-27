@@ -3,7 +3,6 @@ import { getGifts as getGiftsWithFallback } from './api/gifts';
 import './styles/App.css';
 
 import Hero from './components/Hero';
-import FilterBar from './components/FilterBar';
 import GiftGrid from './components/GiftGrid';
 import LoadingSpinner from './components/LoadingSpinner';
 import ErrorMessage from './components/ErrorMessage';
@@ -96,10 +95,41 @@ function App() {
   return (
     <div className="app-container">
       <Hero />
-      <FilterBar
-        filters={filters}
-        onFilterChange={handleFilterChange}
-      />
+      <div className="simple-filter-bar">
+        <input
+          type="text"
+          placeholder="Search gifts..."
+          value={filters.search}
+          onChange={(e) => handleFilterChange({ ...filters, search: e.target.value })}
+          className="search-input"
+        />
+        <select
+          value={filters.category}
+          onChange={(e) => handleFilterChange({ ...filters, category: e.target.value })}
+          className="category-select"
+        >
+          <option value="">All Categories</option>
+          <option value="jewelry">Jewelry</option>
+          <option value="tech">Tech</option>
+          <option value="home">Home & Living</option>
+          <option value="experiences">Experiences</option>
+          <option value="fashion">Fashion</option>
+        </select>
+        <input
+          type="number"
+          placeholder="Min Price"
+          value={filters.minPrice}
+          onChange={(e) => handleFilterChange({ ...filters, minPrice: e.target.value })}
+          className="price-input"
+        />
+        <input
+          type="number"
+          placeholder="Max Price"
+          value={filters.maxPrice}
+          onChange={(e) => handleFilterChange({ ...filters, maxPrice: e.target.value })}
+          className="price-input"
+        />
+      </div>
       <ResultsSummary count={gifts.length} total={allGifts.length} />
       <GiftGrid
         gifts={gifts}
