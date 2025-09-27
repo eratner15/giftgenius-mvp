@@ -1,0 +1,92 @@
+/*
+ * Styles for the dedicated product detail page. These styles aim for a
+ * clean, responsive layout that looks good on both mobile and desktop
+ * screens. Feel free to adjust padding and typography to match the
+ * overall site aesthetic.
+ */
+
+.product-detail-page {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 2rem 1rem;
+  background: var(--background, #f9fafb);
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.product-detail-wrapper {
+  max-width: 800px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .product-detail-wrapper {
+    flex-direction: row;
+  }
+}
+
+.product-detail-image {
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+  border-radius: 0.5rem;
+  object-fit: cover;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.product-detail-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.product-detail-title {
+  font-size: 2rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.product-detail-price {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: #4a5568;
+}
+
+.product-detail-description {
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #4a5568;
+}
+
+.product-detail-why h2 {
+  font-size: 1.25rem;
+  margin-bottom: 0.25rem;
+}
+
+.product-detail-why p {
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #4a5568;
+}
+
+.product-detail-cta {
+  margin-top: auto;
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background-color: #6b46c1;
+  color: #ffffff;
+  border-radius: 0.375rem;
+  text-align: center;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+
+.product-detail-cta:hover {
+  background-color: #553c99;
+}
