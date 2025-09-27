@@ -9,6 +9,8 @@ import './styles/ProductDetailModal.css';
 import './styles/AIGiftingExpert.css';
 import './styles/Footer.css';
 import './styles/Wishlist.css';
+import './styles/Testimonials.css';
+import './styles/SocialProof.css';
 
 import Hero from './components/Hero';
 import QuickGiftFinder from './components/QuickGiftFinder';
@@ -23,6 +25,8 @@ import AIGiftingExpert from './components/AIGiftingExpert';
 import Footer from './components/Footer';
 import GiftFinderWizard from './components/GiftFinderWizard';
 import Wishlist from './components/Wishlist';
+import Testimonials from './components/Testimonials';
+import SocialProof from './components/SocialProof';
 
 function App() {
   const [gifts, setGifts] = useState([]);
@@ -181,6 +185,7 @@ function App() {
             onFilterChange={handleFilterChange}
           />
           <ResultsSummary count={gifts.length} total={allGifts.length} />
+          <SocialProof variant="stats-grid" />
           <GiftGrid
             gifts={gifts}
             onGiftClick={handleGiftClick}
@@ -236,6 +241,10 @@ function App() {
           onRemoveFromFavorites={handleRemoveFromWishlist}
         />
       )}
+
+      <Testimonials />
+
+      <SocialProof variant="floating-notification" />
 
       <Footer />
     </div>

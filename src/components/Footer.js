@@ -57,6 +57,17 @@ const Footer = () => {
         </div>
       </div>
 
+      <div className="footer-media-mentions">
+        <h4>As Featured In</h4>
+        <div className="media-badges">
+          <div className="media-badge">TechCrunch</div>
+          <div className="media-badge">Product Hunt</div>
+          <div className="media-badge">BuzzFeed</div>
+          <div className="media-badge">Mashable</div>
+          <div className="media-badge">The Verge</div>
+        </div>
+      </div>
+
       <div className="footer-trust-badges">
         <div className="trust-badge">
           <span className="badge-icon">✓</span>

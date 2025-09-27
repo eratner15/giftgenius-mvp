@@ -78,6 +78,47 @@
   color: white;
 }
 
+/* Media Mentions */
+.footer-media-mentions {
+  max-width: 1200px;
+  margin: 0 auto 48px auto;
+  text-align: center;
+  padding: 0 24px;
+}
+
+.footer-media-mentions h4 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 20px;
+}
+
+.media-badges {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+.media-badge {
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #d1d5db;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.media-badge:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
 /* Trust Badges */
 .footer-trust-badges {
   max-width: 1200px;
@@ -133,6 +174,10 @@
     gap: 32px;
   }
 
+  .media-badges {
+    gap: 16px;
+  }
+
   .footer-trust-badges {
     grid-template-columns: repeat(2, 1fr);
     gap: 16px;
@@ -144,6 +189,15 @@
 }
 
 @media (max-width: 480px) {
+  .media-badges {
+    gap: 12px;
+  }
+
+  .media-badge {
+    font-size: 11px;
+    padding: 6px 12px;
+  }
+
   .footer-trust-badges {
     grid-template-columns: 1fr;
   }
