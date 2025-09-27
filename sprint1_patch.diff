@@ -1,0 +1,247 @@
+*** Begin Patch
+*** Add File: src/components/ProductDetailView.js
++import React, { useState, useEffect } from 'react';
++import { getGifts as fetchGifts, getGifts as getGiftsWithFallback } from '../api/gifts';
++import '../styles/ProductDetail.css';
++
++/**
++ * ProductDetailView
++ *
++ * A dedicated product detail page. Given a gift ID from the URL, this
++ * component fetches the corresponding gift from the existing gifts API
++ * and renders a detailed view including an image, title, description,
++ * price and a call‑to‑action button linking to the affiliate URL. A
++ * placeholder explanation is provided for "Why this gift works" until
++ * the AI integration is added.
++ *
++ * Props:
++ *   id (string) – The gift's unique identifier extracted from the URL.
++ */
++const ProductDetailView = ({ id }) => {
++  const [gift, setGift] = useState(null);
++  const [loading, setLoading] = useState(true);
++  const [error, setError] = useState(null);
++
++  useEffect(() => {
++    // Fetch all gifts and find the matching one. We reuse the
++    // existing getGifts API for now; in the future this can be
++    // optimized to fetch a single gift by ID.
++    const fetchGift = async () => {
++      try {
++        const data = await getGiftsWithFallback();
++        const list = data.gifts || data || [];
++        const found = list.find(item => {
++          // Gifts may have id or slug properties; check both
++          return (item.id && String(item.id) === id) || (item.slug && item.slug === id);
++        });
++        setGift(found);
++      } catch (err) {
++        console.error('Error fetching gift:', err);
++        setError(err.message || 'Unable to load gift');
++      } finally {
++        setLoading(false);
++      }
++    };
++    fetchGift();
++  }, [id]);
++
++  if (loading) {
++    return (
++      <div className="product-detail-page">
++        <p>Loading gift details…</p>
++      </div>
++    );
++  }
++
++  if (error || !gift) {
++    return (
++      <div className="product-detail-page">
++        <p>Sorry, we couldn't find that gift.</p>
++      </div>
++    );
++  }
++
++  // Derive image and URL fields with fallbacks
++  const image = gift.image_url || gift.imageUrl || gift.image || null;
++  const title = gift.name || gift.title || 'Gift';
++  const description = gift.description || gift.details || '';
++  const price = gift.price ? `$${gift.price}` : '';
++  const whyWorks = gift.successReason || gift.reason || 'This gift is highly rated by other recipients and suits the occasion perfectly.';
++  const affiliateUrl = gift.trackedUrl || gift.affiliateUrl || gift.buyUrl || gift.url || '#';
++
++  return (
++    <div className="product-detail-page">
++      <div className="product-detail-wrapper">
++        {image && (
++          <img
++            src={image}
++            alt={title}
++            className="product-detail-image"
++          />
++        )}
++        <div className="product-detail-content">
++          <h1 className="product-detail-title">{title}</h1>
++          {price && <div className="product-detail-price">{price}</div>}
++          {description && <p className="product-detail-description">{description}</p>}
++          <div className="product-detail-why">
++            <h2>Why this gift works</h2>
++            <p>{whyWorks}</p>
++          </div>
++          <a
++            href={affiliateUrl}
++            target="_blank"
++            rel="noopener noreferrer"
++            className="product-detail-cta"
++          >
++            Buy this gift
++          </a>
++        </div>
++      </div>
++    </div>
++  );
++};
++
++export default ProductDetailView;
+*** End Patch
+
+*** Begin Patch
+*** Add File: src/styles/ProductDetail.css
++/*
++ * Styles for the dedicated product detail page. These styles aim for a
++ * clean, responsive layout that looks good on both mobile and desktop
++ * screens. Feel free to adjust padding and typography to match the
++ * overall site aesthetic.
++ */
++
++.product-detail-page {
++  display: flex;
++  justify-content: center;
++  align-items: flex-start;
++  padding: 2rem 1rem;
++  background: var(--background, #f9fafb);
++  min-height: 100vh;
++  box-sizing: border-box;
++}
++
++.product-detail-wrapper {
++  max-width: 800px;
++  width: 100%;
++  display: flex;
++  flex-direction: column;
++  gap: 1.5rem;
++}
++
++@media (min-width: 640px) {
++  .product-detail-wrapper {
++    flex-direction: row;
++  }
++}
++
++.product-detail-image {
++  width: 100%;
++  max-width: 400px;
++  height: auto;
++  border-radius: 0.5rem;
++  object-fit: cover;
++  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
++}
++
++.product-detail-content {
++  flex: 1;
++  display: flex;
++  flex-direction: column;
++  gap: 1rem;
++}
++
++.product-detail-title {
++  font-size: 2rem;
++  font-weight: 600;
++  margin: 0;
++}
++
++.product-detail-price {
++  font-size: 1.25rem;
++  font-weight: 500;
++  color: #4a5568;
++}
++
++.product-detail-description {
++  font-size: 1rem;
++  line-height: 1.5;
++  color: #4a5568;
++}
++
++.product-detail-why h2 {
++  font-size: 1.25rem;
++  margin-bottom: 0.25rem;
++}
++
++.product-detail-why p {
++  font-size: 1rem;
++  line-height: 1.5;
++  color: #4a5568;
++}
++
++.product-detail-cta {
++  margin-top: auto;
++  display: inline-block;
++  padding: 0.75rem 1.5rem;
++  background-color: #6b46c1;
++  color: #ffffff;
++  border-radius: 0.375rem;
++  text-align: center;
++  text-decoration: none;
++  font-weight: 600;
++  transition: background-color 0.2s ease;
++}
++
++.product-detail-cta:hover {
++  background-color: #553c99;
++}
+*** End Patch
+
+*** Begin Patch
+*** Update File: src/App.js
+@@
+-import { CollaborativeGiftList } from './components/GiftListCollaboration';
++import { CollaborativeGiftList } from './components/GiftListCollaboration';
++import ProductDetailView from './components/ProductDetailView';
+@@ function App() {
+   const [filter, setFilter] = useState({
+@@
+     quickFilter: ''
+   });
++
++  // --- Route handling for product detail pages ---
++  // If the current URL path corresponds to a product details page (i.e. starts
++  // with `/products/`), render the dedicated ProductDetailView component and
++  // bypass the rest of the application UI. This simple routing logic means
++  // you can navigate to `/products/<id>` directly or via clicking a gift card.
++  const pathname = window.location.pathname;
++  if (pathname && pathname.startsWith('/products/')) {
++    const id = pathname.split('/').pop();
++    return <ProductDetailView id={id} />;
++  }
+@@
+   const handleGiftClick = (gift) => {
+-    setSelectedGift(gift);
+-    if (analytics) {
+-      analytics.trackGiftView(gift.id, 2000);
+-      analytics.trackCategoryInterest(gift.category);
+-      analytics.trackPriceInterest(gift.price);
+-    }
+-
+-    // Track gift view for analytics
++    // Navigate to dedicated product page instead of showing modal
++    // This triggers our simple client‑side routing above.
++    if (gift && gift.id) {
++      // Preserve tracking before redirect
++      if (analytics) {
++        analytics.trackGiftView(gift.id, 2000);
++        analytics.trackCategoryInterest(gift.category);
++        analytics.trackPriceInterest(gift.price);
++      }
++      window.location.href = `/products/${gift.id}`;
++    }
+   };
+*** End Patch
