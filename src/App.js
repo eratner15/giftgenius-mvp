@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-use-before-define */
-import React, { useState, useEffect, useCallback, lazy, Suspense } from 'react';
+import React, { useState, useEffect, useCallback, lazy } from 'react';
 import { getGifts as getGiftsWithFallback } from './api/gifts';
 import { UserAnalytics, RecommendationEngine, SocialProofManager } from './utils/analytics';
 import { offlineManager, saveOffline } from './utils/offlineSync';
@@ -60,6 +60,7 @@ function App() {
   // Level 4: Mobile Excellence states
   const [showMobileWizard, setShowMobileWizard] = useState(false);
   const [showCameraScanner, setShowCameraScanner] = useState(false);
+  // eslint-disable-next-line no-unused-vars
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Level 5: Social & Viral states
@@ -197,6 +198,7 @@ function App() {
     setShowCollaboration(true);
   };
 
+  // eslint-disable-next-line no-unused-vars
   const handleChallengeAction = (action, data) => {
     if (analytics) {
       analytics.trackChallengeInteraction(action, data);
