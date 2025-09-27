@@ -75,7 +75,7 @@ const GiftCard = ({ gift, onClick, analytics, recommendationEngine }) => {
               alt={gift.name}
               onLoad={handleImageLoad}
                             onError={handleImageError}
-image_urlstyle={{ 
+style={{ 
                                                           display: imageLoaded ? 'block' : 'none',
                                                           width: '100%',
                                                           height: '200px',
