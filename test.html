@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GiftGenius Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            text-align: center;
+        }
+        h1 { font-size: 2.5em; margin-bottom: 20px; }
+        .status {
+            background: rgba(0, 255, 0, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .gift-card {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 15px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎁 GiftGenius MVP</h1>
+
+        <div class="status">
+            <h2>✅ GitHub Pages is Working!</h2>
+            <p>This confirms that GitHub Pages hosting is functional.</p>
+        </div>
+
+        <div class="gift-card">
+            <h3>🎯 Diamond Tennis Bracelet</h3>
+            <p><strong>Price:</strong> $299.99</p>
+            <p><strong>Success Rate:</strong> 98%</p>
+            <p><strong>Description:</strong> Elegant 14k white gold bracelet with genuine diamonds - a timeless classic</p>
+        </div>
+
+        <div class="gift-card">
+            <h3>📱 Apple Watch Series 9</h3>
+            <p><strong>Price:</strong> $399.99</p>
+            <p><strong>Success Rate:</strong> 96%</p>
+            <p><strong>Description:</strong> Latest Apple Watch with health monitoring, GPS, and cellular connectivity</p>
+        </div>
+
+        <div class="gift-card">
+            <h3>🍫 Artisan Belgian Chocolate Collection</h3>
+            <p><strong>Price:</strong> $62.50</p>
+            <p><strong>Success Rate:</strong> 88%</p>
+            <p><strong>Description:</strong> Handcrafted chocolates from premium Belgian cocoa - 24 piece luxury gift box</p>
+        </div>
+
+        <p><strong>Next Steps:</strong> Debug React app loading issue and restore full functionality</p>
+
+        <p><em>Test page created: <span id="timestamp"></span></em></p>
+    </div>
+
+    <script>
+        document.getElementById('timestamp').textContent = new Date().toISOString();
+        console.log('🎉 JavaScript is working on GitHub Pages!');
+    </script>
+</body>
+</html>
