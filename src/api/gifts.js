@@ -1,26 +1,69 @@
-// API Service Layer for GiftGenius Backend
-const API_BASE_URL = process.env.REACT_APP_API_URL ||
-  (process.env.NODE_ENV === 'production'
-    ? 'https://api-876makour-eratner15s-projects.vercel.app' // New Vercel functions API
-    : 'http://localhost:3001'); // Local development
+// API Service Layer for GiftGenius (Using Local Data)
+import { enhancedGifts } from '../data/enhanced-gifts';
 
 class ApiService {
-  async request(url, options = {}) {
-    const fullUrl = url.startsWith('http') ? url : `${API_BASE_URL}${url}`;
+  async mockGiftsAPI(url, options = {}) {
+    // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 100));
 
-    const response = await fetch(fullUrl, {
-      headers: {
-        'Content-Type': 'application/json',
-        ...options.headers,
-      },
-      ...options,
-    });
+    // Parse query parameters
+    const urlObj = new URL(url, 'http://localhost');
+    const params = urlObj.searchParams;
 
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    let gifts = [...enhancedGifts];
+
+    // Apply filters
+    if (params.get('category')) {
+      gifts = gifts.filter(gift => gift.category === params.get('category'));
     }
 
-    return response.json();
+    if (params.get('minPrice')) {
+      const minPrice = parseFloat(params.get('minPrice'));
+      gifts = gifts.filter(gift => gift.price >= minPrice);
+    }
+
+    if (params.get('maxPrice')) {
+      const maxPrice = parseFloat(params.get('maxPrice'));
+      gifts = gifts.filter(gift => gift.price <= maxPrice);
+    }
+
+    if (params.get('search')) {
+      const searchTerm = params.get('search').toLowerCase();
+      gifts = gifts.filter(gift =>
+        gift.title.toLowerCase().includes(searchTerm) ||
+        gift.description.toLowerCase().includes(searchTerm)
+      );
+    }
+
+    // Sort by success rate
+    gifts.sort((a, b) => b.success_rate - a.success_rate);
+
+    const limit = parseInt(params.get('limit')) || 50;
+    const offset = parseInt(params.get('offset')) || 0;
+    const paginatedGifts = gifts.slice(offset, offset + limit);
+
+    return {
+      gifts: paginatedGifts,
+      pagination: {
+        total: gifts.length,
+        count: paginatedGifts.length,
+        limit,
+        offset,
+        has_more: offset + paginatedGifts.length < gifts.length
+      },
+      processing_time_ms: 50
+    };
+  }
+
+  async request(url, options = {}) {
+    // Mock API using local data instead of external requests
+    if (url.includes('/api/gifts')) {
+      return this.mockGiftsAPI(url, options);
+    }
+
+    // For other requests, simulate network delay and return mock data
+    await new Promise(resolve => setTimeout(resolve, 100));
+    return { success: true, data: [] };
   }
 
   // Get all gifts with optional filters
@@ -64,52 +107,7 @@ class ApiService {
 
   // Fallback to local data if API is unavailable
   async getGiftsWithFallback(filters = {}) {
-    try {
-      return await this.getGifts(filters);
-    } catch (error) {
-      console.warn('API unavailable, using fallback data:', error.message);
-
-      // Import and use sample data
-      const { getSampleGifts } = await import('../data/sampleGifts');
-      const data = getSampleGifts();
-
-      // Apply client-side filtering if needed
-      let filteredGifts = data.gifts || [];
-
-      if (filters.category) {
-        filteredGifts = filteredGifts.filter(gift =>
-          gift.category === filters.category
-        );
-      }
-
-      if (filters.maxPrice) {
-        filteredGifts = filteredGifts.filter(gift =>
-          gift.price <= filters.maxPrice
-        );
-      }
-
-      if (filters.minSuccessRate) {
-        filteredGifts = filteredGifts.filter(gift =>
-          (gift.successRate || 0) >= filters.minSuccessRate
-        );
-      }
-
-      if (filters.search) {
-        const searchTerm = filters.search.toLowerCase();
-        filteredGifts = filteredGifts.filter(gift =>
-          (gift.name || gift.title || '').toLowerCase().includes(searchTerm) ||
-          (gift.category || '').toLowerCase().includes(searchTerm) ||
-          (gift.description || '').toLowerCase().includes(searchTerm)
-        );
-      }
-
-      return {
-        gifts: filteredGifts,
-        total: filteredGifts.length,
-        page: 1,
-        totalPages: 1
-      };
-    }
+    return await this.getGifts(filters);
   }
 }
 
