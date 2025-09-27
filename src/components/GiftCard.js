@@ -102,7 +102,7 @@ style={{
         alt={gift.name || gift.title}
         onError={(e) => {
           e.target.src = '/api/placeholder/300/200';
-        image_url
+        
       />
 
       {badge && (
