@@ -2,7 +2,7 @@ const { setCorsHeaders } = require('./_shared/cors');
 const { validateGiftQueryParams } = require('./_shared/validation');
 const { enhancedGifts } = require('./_shared/enhanced-gifts');
 
-export default function handler(req, res) {
+module.exports = function handler(req, res) {
   // Handle CORS
   if (setCorsHeaders(req, res)) {
     return; // Preflight request was handled
