@@ -16,6 +16,8 @@ class ErrorBoundary extends React.Component {
 
   componentDidCatch(error, errorInfo) {
     console.error('ErrorBoundary caught an error:', error, errorInfo);
+    console.error('Error stack:', error.stack);
+    console.error('Component stack:', errorInfo.componentStack);
     this.setState({
       error,
       errorInfo
@@ -50,9 +52,9 @@ class ErrorBoundary extends React.Component {
             <h1>Oops! Something went wrong</h1>
             <p>We're sorry for the inconvenience. The application encountered an unexpected error.</p>
 
-            {process.env.NODE_ENV === 'development' && this.state.error && (
+            {this.state.error && (
               <details className="error-details">
-                <summary>Error Details (Development Only)</summary>
+                <summary>Error Details</summary>
                 <pre className="error-stack">
                   {this.state.error.toString()}
                   {this.state.errorInfo && this.state.errorInfo.componentStack}
