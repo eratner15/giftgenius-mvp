@@ -53,11 +53,5 @@
         }
       ]
     }
-  ],
-  "rewrites": [
-    {
-      "source": "/api/:path*",
-      "destination": "https://api-876makour-eratner15s-projects.vercel.app/api/:path*"
-    }
   ]
 }
