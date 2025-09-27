@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import openAIService from '../services/openai';
 
 const AIGiftingExpert = ({ onClose, gifts, onRecommendGift }) => {
   const [messages, setMessages] = useState([
@@ -112,7 +113,7 @@ const AIGiftingExpert = ({ onClose, gifts, onRecommendGift }) => {
     return { response, gifts: recommendedGifts };
   };
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!input.trim()) return;
 
     // Add user message
@@ -124,12 +125,18 @@ const AIGiftingExpert = ({ onClose, gifts, onRecommendGift }) => {
     };
 
     setMessages(prev => [...prev, userMessage]);
+    const currentInput = input;
     setInput('');
     setIsTyping(true);
 
-    // Simulate AI thinking
-    setTimeout(() => {
-      const { response, gifts: recommendedGifts } = generateAIResponse(input);
+    try {
+      // Prepare messages for OpenAI API (exclude recommendations and metadata)
+      const apiMessages = [...messages, userMessage].map(m => ({
+        role: m.role,
+        content: m.content
+      }));
+
+      const { response, gifts: recommendedGifts } = await openAIService.getChatResponse(apiMessages, gifts);
 
       const aiMessage = {
         id: messages.length + 2,
@@ -140,8 +147,24 @@ const AIGiftingExpert = ({ onClose, gifts, onRecommendGift }) => {
       };
 
       setMessages(prev => [...prev, aiMessage]);
+    } catch (error) {
+      console.error('Error getting AI response:', error);
+
+      // Fallback to local response if API fails
+      const { response, gifts: recommendedGifts } = generateAIResponse(currentInput);
+
+      const aiMessage = {
+        id: messages.length + 2,
+        role: 'assistant',
+        content: response + '\n\n(Note: Using offline mode)',
+        recommendations: recommendedGifts,
+        timestamp: new Date()
+      };
+
+      setMessages(prev => [...prev, aiMessage]);
+    } finally {
       setIsTyping(false);
-    }, 1000);
+    }
   };
 
   const handleKeyPress = (e) => {

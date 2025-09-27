@@ -8,6 +8,7 @@ import './styles/QuickGiftFinder.css';
 import './styles/ProductDetailModal.css';
 import './styles/AIGiftingExpert.css';
 import './styles/Footer.css';
+import './styles/Wishlist.css';
 
 import Hero from './components/Hero';
 import QuickGiftFinder from './components/QuickGiftFinder';
@@ -21,6 +22,7 @@ import ProductDetailModal from './components/ProductDetailModal';
 import AIGiftingExpert from './components/AIGiftingExpert';
 import Footer from './components/Footer';
 import GiftFinderWizard from './components/GiftFinderWizard';
+import Wishlist from './components/Wishlist';
 
 function App() {
   const [gifts, setGifts] = useState([]);
@@ -31,6 +33,7 @@ function App() {
   const [showFinder, setShowFinder] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [showAIChat, setShowAIChat] = useState(false);
+  const [showWishlist, setShowWishlist] = useState(false);
   const [favorites, setFavorites] = useState(() => {
     const saved = localStorage.getItem('giftgenius_favorites');
     return saved ? JSON.parse(saved) : [];
@@ -94,6 +97,11 @@ function App() {
 
     setFavorites(newFavorites);
     localStorage.setItem('giftgenius_favorites', JSON.stringify(newFavorites));
+  };
+
+  const handleRemoveFromWishlist = (giftId) => {
+    const newFavorites = favorites.filter(f => f.id !== giftId);
+    setFavorites(newFavorites);
   };
 
   const handleScenarioSelect = async (scenario) => {
@@ -190,13 +198,22 @@ function App() {
       )}
 
       {!showAIChat && (
-        <button
-          className="ai-chat-toggle"
-          onClick={() => setShowAIChat(true)}
-          title="Chat with AI Gifting Expert"
-        >
-          🤖
-        </button>
+        <>
+          <button
+            className="ai-chat-toggle"
+            onClick={() => setShowAIChat(true)}
+            title="Chat with AI Gifting Expert"
+          >
+            🤖
+          </button>
+          <button
+            className="wishlist-toggle"
+            onClick={() => setShowWishlist(true)}
+            title="View My Wishlist"
+          >
+            💝 <span className="wishlist-count">{favorites.length}</span>
+          </button>
+        </>
       )}
 
       {showAIChat && (
@@ -206,6 +223,17 @@ function App() {
           onRecommendGift={(gift) => {
             setSelectedGift(gift);
           }}
+        />
+      )}
+
+      {showWishlist && (
+        <Wishlist
+          onClose={() => setShowWishlist(false)}
+          onGiftClick={(gift) => {
+            setSelectedGift(gift);
+            setShowWishlist(false);
+          }}
+          onRemoveFromFavorites={handleRemoveFromWishlist}
         />
       )}
 
