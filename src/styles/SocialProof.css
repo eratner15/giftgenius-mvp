@@ -92,7 +92,7 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #6b46c1 0%, #9333ea 100%);
+  background: var(--color-primary);
   color: white;
   display: flex;
   align-items: center;
@@ -162,7 +162,7 @@
   padding: 16px;
   background: #f9fafb;
   border-radius: 12px;
-  border-left: 3px solid #6b46c1;
+  border-left: 3px solid var(--color-primary);
 }
 
 .snippet-rating {
@@ -228,7 +228,7 @@
   width: 40px;
   height: 40px;
   border-radius: 8px;
-  background: linear-gradient(135deg, #6b46c1 0%, #9333ea 100%);
+  background: var(--color-primary);
   color: white;
   display: flex;
   align-items: center;
@@ -276,7 +276,7 @@
 .stat-number {
   font-size: 24px;
   font-weight: 800;
-  color: #6b46c1;
+  color: var(--color-primary);
   margin-bottom: 8px;
 }
 
@@ -320,7 +320,7 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #6b46c1 0%, #9333ea 100%);
+  background: var(--color-primary);
   color: white;
   display: flex;
   align-items: center;

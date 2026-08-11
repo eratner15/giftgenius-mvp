@@ -1,91 +1,73 @@
-import React from 'react';
+import React, { useState } from 'react';
+import LegalModal from './LegalModal';
 
-const Footer = () => {
+const Footer = ({ onNavigate }) => {
   const currentYear = new Date().getFullYear();
+  const [legalModal, setLegalModal] = useState({ isOpen: false, type: null });
+
+  const openLegalModal = (type) => {
+    setLegalModal({ isOpen: true, type });
+  };
+
+  const closeLegalModal = () => {
+    setLegalModal({ isOpen: false, type: null });
+  };
+
+  const handleNavigation = (page) => {
+    if (onNavigate) {
+      onNavigate(page);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
 
   return (
     <footer className="site-footer">
       <div className="footer-content">
         <div className="footer-section">
-          <h3>🎁 GiftGenius</h3>
+          <h3>GiftGenius</h3>
           <p>AI-powered gift recommendations backed by real success stories. Find the perfect gift every time.</p>
-          <div className="social-links">
-            <a href="#" aria-label="Facebook">📘</a>
-            <a href="#" aria-label="Twitter">🐦</a>
-            <a href="#" aria-label="Instagram">📷</a>
-            <a href="#" aria-label="Pinterest">📌</a>
-          </div>
         </div>
 
         <div className="footer-section">
           <h4>Shop</h4>
           <ul>
-            <li><a href="#browse">Browse All Gifts</a></li>
-            <li><a href="#occasions">By Occasion</a></li>
-            <li><a href="#recipients">By Recipient</a></li>
-            <li><a href="#budget">By Budget</a></li>
+            <li><button onClick={() => handleNavigation('browse')} className="footer-link-button">Browse All Gifts</button></li>
+            <li><button onClick={() => handleNavigation('guides')} className="footer-link-button">Gift Guides</button></li>
+            <li><button onClick={() => handleNavigation('concierge')} className="footer-link-button">Personal Concierge</button></li>
+            <li><button onClick={() => handleNavigation('home')} className="footer-link-button">Take Gift Quiz</button></li>
           </ul>
         </div>
 
         <div className="footer-section">
           <h4>Company</h4>
           <ul>
-            <li><a href="#about">About Us</a></li>
-            <li><a href="#how-it-works">How It Works</a></li>
-            <li><a href="#success-stories">Success Stories</a></li>
-            <li><a href="#blog">Gift Ideas Blog</a></li>
+            <li><button onClick={() => handleNavigation('about')} className="footer-link-button">About Us</button></li>
+            <li><button onClick={() => handleNavigation('how-it-works')} className="footer-link-button">How It Works</button></li>
+            <li><button onClick={() => handleNavigation('about')} className="footer-link-button">Success Stories</button></li>
+            <li><button onClick={() => handleNavigation('guides')} className="footer-link-button">Gift Ideas</button></li>
           </ul>
         </div>
 
         <div className="footer-section">
           <h4>Support</h4>
           <ul>
-            <li><a href="#faq">FAQ</a></li>
-            <li><a href="#contact">Contact Us</a></li>
-            <li><a href="#shipping">Shipping Info</a></li>
-            <li><a href="#returns">Returns</a></li>
+            <li><button onClick={() => handleNavigation('faq')} className="footer-link-button">FAQ</button></li>
+            <li><button onClick={() => handleNavigation('contact')} className="footer-link-button">Contact Us</button></li>
+            <li><button onClick={() => handleNavigation('faq')} className="footer-link-button">Shipping Info</button></li>
+            <li><button onClick={() => handleNavigation('faq')} className="footer-link-button">Returns</button></li>
           </ul>
         </div>
 
         <div className="footer-section">
           <h4>Legal</h4>
           <ul>
-            <li><a href="#privacy">Privacy Policy</a></li>
-            <li><a href="#terms">Terms of Service</a></li>
-            <li><a href="#affiliate">Affiliate Disclosure</a></li>
+            <li><button onClick={() => openLegalModal('privacy')} className="footer-link-button">Privacy Policy</button></li>
+            <li><button onClick={() => openLegalModal('terms')} className="footer-link-button">Terms of Service</button></li>
+            <li><button onClick={() => openLegalModal('affiliate')} className="footer-link-button">Affiliate Disclosure</button></li>
           </ul>
         </div>
       </div>
 
-      <div className="footer-media-mentions">
-        <h4>As Featured In</h4>
-        <div className="media-badges">
-          <div className="media-badge">TechCrunch</div>
-          <div className="media-badge">Product Hunt</div>
-          <div className="media-badge">BuzzFeed</div>
-          <div className="media-badge">Mashable</div>
-          <div className="media-badge">The Verge</div>
-        </div>
-      </div>
-
-      <div className="footer-trust-badges">
-        <div className="trust-badge">
-          <span className="badge-icon">✓</span>
-          <span>Secure Checkout</span>
-        </div>
-        <div className="trust-badge">
-          <span className="badge-icon">⚡</span>
-          <span>Fast Shipping</span>
-        </div>
-        <div className="trust-badge">
-          <span className="badge-icon">🔄</span>
-          <span>Easy Returns</span>
-        </div>
-        <div className="trust-badge">
-          <span className="badge-icon">💝</span>
-          <span>Gift Wrapping</span>
-        </div>
-      </div>
 
       <div className="footer-bottom">
         <p>© {currentYear} GiftGenius. All rights reserved.</p>
@@ -93,6 +75,12 @@ const Footer = () => {
           As an Amazon Associate, we earn from qualifying purchases.
         </p>
       </div>
+
+      <LegalModal
+        isOpen={legalModal.isOpen}
+        onClose={closeLegalModal}
+        type={legalModal.type}
+      />
     </footer>
   );
 };

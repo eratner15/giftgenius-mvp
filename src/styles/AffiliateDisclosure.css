@@ -1,0 +1,227 @@
+/* Affiliate Disclosure Styles */
+
+.affiliate-disclosure-banner {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+  color: white;
+  border-bottom: 3px solid var(--color-accent);
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.affiliate-disclosure-banner.minimized {
+  height: 40px;
+  overflow: hidden;
+}
+
+.disclosure-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  gap: 16px;
+}
+
+.disclosure-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.disclosure-text {
+  flex: 1;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.disclosure-text strong {
+  color: #fbbf24;
+  font-weight: 600;
+}
+
+.disclosure-minimize {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 6px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.disclosure-minimize:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+.disclosure-minimized {
+  position: absolute;
+  top: 0;
+  left: 20px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #d1d5db;
+}
+
+.mini-icon {
+  font-size: 14px;
+}
+
+.mini-text {
+  font-weight: 500;
+}
+
+/* Inline Disclosure */
+.affiliate-disclosure-inline {
+  background: linear-gradient(135deg, #ede9fe, #ddd6fe);
+  border: 1px solid #c4b5fd;
+  border-radius: 8px;
+  margin: 16px 0;
+  padding: 12px 16px;
+}
+
+.inline-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--color-primary);
+}
+
+.inline-icon {
+  font-size: 16px;
+}
+
+.inline-text {
+  font-weight: 500;
+}
+
+/* Product Disclosure */
+.affiliate-disclosure-product {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: rgba(232, 168, 124, 0.1);
+  border: 1px solid rgba(232, 168, 124, 0.2);
+  border-radius: 6px;
+}
+
+.product-disclosure {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--color-accent);
+  font-weight: 500;
+}
+
+.product-icon {
+  font-size: 12px;
+}
+
+/* Top Banner */
+.affiliate-disclosure-top {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: white;
+  padding: 16px 20px;
+  text-align: center;
+  position: relative;
+}
+
+.top-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.disclosure-main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.main-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.main-text {
+  font-size: 14px;
+  line-height: 1.5;
+  text-align: left;
+}
+
+.main-text strong {
+  color: #fef3c7;
+}
+
+.disclosure-actions {
+  flex-shrink: 0;
+}
+
+.learn-more-link {
+  color: #fef3c7;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 8px 16px;
+  border: 2px solid #fef3c7;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.learn-more-link:hover {
+  background: #fef3c7;
+  color: #d97706;
+  transform: translateY(-1px);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .disclosure-content {
+    padding: 10px 16px;
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
+
+  .disclosure-text {
+    font-size: 13px;
+  }
+
+  .top-content {
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+  }
+
+  .disclosure-main {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .main-text {
+    text-align: center;
+    font-size: 13px;
+  }
+
+  .affiliate-disclosure-banner.minimized {
+    height: 35px;
+  }
+
+  .disclosure-minimized {
+    left: 16px;
+    height: 35px;
+  }
+}

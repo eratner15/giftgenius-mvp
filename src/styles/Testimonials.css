@@ -20,7 +20,7 @@
   font-weight: 800;
   color: #1f2937;
   margin-bottom: 16px;
-  background: linear-gradient(135deg, #6b46c1 0%, #9333ea 100%);
+  background: var(--color-primary);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -53,7 +53,7 @@
 .stat-number {
   font-size: 32px;
   font-weight: 800;
-  color: #6b46c1;
+  color: var(--color-primary);
   margin-bottom: 8px;
 }
 
@@ -77,13 +77,13 @@
   width: 56px;
   height: 56px;
   border: none;
-  background: linear-gradient(135deg, #6b46c1 0%, #9333ea 100%);
+  background: var(--color-primary);
   color: white;
   border-radius: 50%;
   font-size: 24px;
   cursor: pointer;
   transition: all 0.3s;
-  box-shadow: 0 4px 12px rgba(107, 70, 193, 0.3);
+  box-shadow: 0 4px 12px rgba(26, 26, 46, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -91,7 +91,7 @@
 
 .carousel-btn:hover {
   transform: scale(1.1);
-  box-shadow: 0 6px 16px rgba(107, 70, 193, 0.4);
+  box-shadow: 0 6px 16px rgba(26, 26, 46, 0.4);
 }
 
 .testimonial-main {
@@ -111,7 +111,7 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(135deg, #6b46c1 0%, #9333ea 100%);
+  background: var(--color-primary);
 }
 
 .testimonial-content {
@@ -170,7 +170,7 @@
   height: 64px;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid #6b46c1;
+  border: 3px solid var(--color-primary);
 }
 
 .author-info {
@@ -204,7 +204,7 @@
 
 .author-occasion {
   font-size: 14px;
-  color: #9333ea;
+  color: var(--color-accent);
   font-weight: 600;
   margin-bottom: 4px;
 }
@@ -248,12 +248,12 @@
 }
 
 .dot.active {
-  background: #6b46c1;
+  background: var(--color-primary);
   transform: scale(1.2);
 }
 
 .dot:hover {
-  background: #9333ea;
+  background: var(--color-accent);
 }
 
 /* Additional Testimonials Grid */

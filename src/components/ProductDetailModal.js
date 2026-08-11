@@ -14,9 +14,8 @@ const ProductDetailModal = ({ gift, onClose, onAddToFavorites, isFavorited }) =>
 
   if (!gift) return null;
 
-  const getHearts = (successRate) => {
-    const hearts = Math.round((successRate || 0) / 20);
-    return '❤️'.repeat(Math.max(1, Math.min(5, hearts)));
+  const getRating = (successRate) => {
+    return (Math.round((successRate || 0) / 20 * 10) / 10).toFixed(1);
   };
 
   const handleShare = (platform) => {
@@ -87,7 +86,7 @@ const ProductDetailModal = ({ gift, onClose, onAddToFavorites, isFavorited }) =>
               />
               <div className="image-badges">
                 {gift.success_rate >= 95 && (
-                  <span className="badge hot">🔥 HOT</span>
+                  <span className="badge hot">HOT</span>
                 )}
               </div>
             </div>
@@ -104,7 +103,7 @@ const ProductDetailModal = ({ gift, onClose, onAddToFavorites, isFavorited }) =>
                   onClick={() => onAddToFavorites(gift)}
                   title={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
                 >
-                  {isFavorited ? '❤️' : '🤍'}
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill={isFavorited ? "var(--color-accent)" : "none"} stroke={isFavorited ? "var(--color-accent)" : "currentColor"} strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
                 </button>
 
                 <div className="share-wrapper">
@@ -112,15 +111,15 @@ const ProductDetailModal = ({ gift, onClose, onAddToFavorites, isFavorited }) =>
                     className="share-btn"
                     onClick={() => setShowShareMenu(!showShareMenu)}
                   >
-                    📤 Share
+                    Share
                   </button>
 
                   {showShareMenu && (
                     <div className="share-menu">
-                      <button onClick={() => handleShare('copy')}>📋 Copy Link</button>
-                      <button onClick={() => handleShare('facebook')}>📘 Facebook</button>
-                      <button onClick={() => handleShare('twitter')}>🐦 Twitter</button>
-                      <button onClick={() => handleShare('email')}>✉️ Email</button>
+                      <button onClick={() => handleShare('copy')}>Copy Link</button>
+                      <button onClick={() => handleShare('facebook')}>Facebook</button>
+                      <button onClick={() => handleShare('twitter')}>Twitter</button>
+                      <button onClick={() => handleShare('email')}>Email</button>
                     </div>
                   )}
                 </div>
@@ -128,9 +127,11 @@ const ProductDetailModal = ({ gift, onClose, onAddToFavorites, isFavorited }) =>
             </div>
 
             <div className="product-rating">
-              <div className="hearts">{getHearts(gift.success_rate)}</div>
+              <span className="rating-text" style={{fontWeight: 700, color: 'var(--color-text)'}}>
+                {getRating(gift.success_rate)}/5
+              </span>
               <span className="rating-text">
-                {gift.success_rate}% success rate · {gift.total_reviews?.toLocaleString()} reviews
+                {gift.success_rate}% success rate &middot; {gift.total_reviews?.toLocaleString()} reviews
               </span>
             </div>
 
@@ -147,10 +148,10 @@ const ProductDetailModal = ({ gift, onClose, onAddToFavorites, isFavorited }) =>
             <div className="product-highlights">
               <h3>Why People Love It</h3>
               <ul>
-                <li>✨ {gift.success_rate}% of recipients loved this gift</li>
-                <li>⚡ Fast & free delivery</li>
-                <li>💝 Gift wrapping available</li>
-                <li>🔄 Easy returns within 30 days</li>
+                <li>&mdash; {gift.success_rate}% of recipients loved this gift</li>
+                <li>&mdash; Fast & free delivery</li>
+                <li>&mdash; Gift wrapping available</li>
+                <li>&mdash; Easy returns within 30 days</li>
               </ul>
             </div>
 
@@ -172,7 +173,7 @@ const ProductDetailModal = ({ gift, onClose, onAddToFavorites, isFavorited }) =>
                       {review.verified && <span className="verified">✓ Verified</span>}
                     </div>
                     <div className="review-meta">
-                      <span className="review-rating">{'⭐'.repeat(review.rating)}</span>
+                      <span className="review-rating">{review.rating}/5</span>
                       <span className="review-date">{review.date}</span>
                     </div>
                   </div>

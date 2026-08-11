@@ -1,0 +1,255 @@
+/* Personal Concierge Page */
+.concierge-page {
+  min-height: 80vh;
+  padding: 60px 24px;
+  background: var(--color-background);
+}
+
+.concierge-intro {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto 60px;
+  padding: 60px 40px;
+  background: white;
+  border-radius: 24px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.concierge-intro::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--color-accent);
+}
+
+.concierge-intro h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 20px;
+}
+
+.concierge-intro p {
+  font-size: 1.3rem;
+  color: #64748b;
+  margin-bottom: 40px;
+  line-height: 1.6;
+}
+
+.start-concierge-btn {
+  background: var(--color-accent);
+  color: white;
+  border: none;
+  padding: 20px 40px;
+  border-radius: 12px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(232, 168, 124, 0.3);
+}
+
+.start-concierge-btn:hover {
+  transform: translateY(-2px);
+  background: var(--color-accent-dark);
+  box-shadow: 0 8px 20px rgba(232, 168, 124, 0.4);
+}
+
+.concierge-testimonials {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.concierge-testimonials h3 {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 40px;
+}
+
+.testimonial-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 24px;
+}
+
+.testimonial {
+  background: white;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.testimonial::before {
+  content: '"';
+  position: absolute;
+  top: -10px;
+  left: 20px;
+  font-size: 4rem;
+  color: var(--color-accent);
+  font-family: serif;
+  opacity: 0.3;
+}
+
+.testimonial:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.testimonial p {
+  font-size: 1.1rem;
+  color: #475569;
+  line-height: 1.7;
+  margin-bottom: 20px;
+  font-style: italic;
+  padding-left: 20px;
+}
+
+.testimonial span {
+  font-weight: 600;
+  color: var(--color-accent);
+  font-size: 0.95rem;
+}
+
+/* Service Features Grid */
+.concierge-features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  margin-top: 60px;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.feature-card {
+  background: white;
+  padding: 32px;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.feature-icon {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  display: block;
+}
+
+.feature-card h4 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 12px;
+}
+
+.feature-card p {
+  color: #64748b;
+  line-height: 1.6;
+}
+
+/* Success Stats */
+.concierge-stats {
+  display: flex;
+  justify-content: center;
+  gap: 60px;
+  margin: 60px 0;
+  padding: 40px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-number {
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  display: block;
+  margin-bottom: 8px;
+}
+
+.stat-label {
+  color: #64748b;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .concierge-page {
+    padding: 40px 16px;
+  }
+
+  .concierge-intro {
+    padding: 40px 24px;
+    margin-bottom: 40px;
+  }
+
+  .concierge-intro h1 {
+    font-size: 2.2rem;
+  }
+
+  .concierge-intro p {
+    font-size: 1.1rem;
+  }
+
+  .start-concierge-btn {
+    width: 100%;
+    padding: 16px 32px;
+    font-size: 1.1rem;
+  }
+
+  .testimonial-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .concierge-stats {
+    flex-direction: column;
+    gap: 32px;
+    text-align: center;
+  }
+
+  .concierge-features {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .concierge-intro h1 {
+    font-size: 2rem;
+  }
+
+  .testimonial {
+    padding: 24px;
+  }
+
+  .testimonial p {
+    font-size: 1rem;
+  }
+
+  .stat-number {
+    font-size: 2.5rem;
+  }
+}

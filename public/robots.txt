@@ -1,0 +1,21 @@
+User-agent: *
+Allow: /
+
+# High-priority pages for crawling
+Allow: /gifts/*
+Allow: /about
+Allow: /how-it-works
+Allow: /faq
+Allow: /contact
+
+# Block admin and development paths
+Disallow: /admin
+Disallow: /dev
+Disallow: /_next
+Disallow: /api
+
+# Sitemap
+Sitemap: https://giftgenius-mvp.netlify.app/sitemap.xml
+
+# Crawl-delay for respectful crawling
+Crawl-delay: 1

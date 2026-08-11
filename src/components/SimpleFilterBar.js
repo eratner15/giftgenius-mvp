@@ -20,7 +20,7 @@ const SimpleFilterBar = ({ filters, onFilterChange }) => {
     <div className="simple-filter-bar">
       <div className="filter-group">
         <div className="search-wrapper">
-          <span className="search-icon">🔍</span>
+          <span className="search-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9B9B9B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
           <input
             type="text"
             placeholder="Search gifts..."
@@ -36,14 +36,14 @@ const SimpleFilterBar = ({ filters, onFilterChange }) => {
           className="category-select"
         >
           <option value="">All Categories</option>
-          <option value="jewelry">💎 Jewelry</option>
-          <option value="tech">📱 Tech</option>
-          <option value="home">🏠 Home & Living</option>
-          <option value="experiences">🎭 Experiences</option>
-          <option value="fashion">👗 Fashion</option>
-          <option value="beauty">💄 Beauty</option>
-          <option value="food">🍷 Food & Gourmet</option>
-          <option value="unique">✨ Unique</option>
+          <option value="jewelry">Jewelry</option>
+          <option value="tech">Tech</option>
+          <option value="home">Home & Living</option>
+          <option value="experiences">Experiences</option>
+          <option value="fashion">Fashion</option>
+          <option value="beauty">Beauty</option>
+          <option value="food">Food & Gourmet</option>
+          <option value="unique">Unique</option>
         </select>
 
         <div className="price-inputs">

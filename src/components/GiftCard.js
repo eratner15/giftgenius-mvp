@@ -1,11 +1,8 @@
 import React, { useState } from 'react';
+import ShippingTimer from './ShippingTimer';
+import OptimizedImage from './OptimizedImage';
 
 const GiftCard = ({ gift, onClick, analytics, recommendationEngine }) => {
-  const [imageLoaded, setImageLoaded] = useState(false);
-  const [imageError, setImageError] = useState(false);
-
-  const handleImageLoad = () => setImageLoaded(true);
-  const handleImageError = () => setImageError(true);
 
   const handleClick = () => {
     if (analytics) {
@@ -25,9 +22,8 @@ const GiftCard = ({ gift, onClick, analytics, recommendationEngine }) => {
     return null;
   };
 
-  const getHearts = (successRate) => {
-    const hearts = Math.round((successRate || 0) / 20);
-    return '❤️'.repeat(Math.max(1, Math.min(5, hearts)));
+  const getRating = (successRate) => {
+    return (Math.round((successRate || 0) / 20 * 10) / 10).toFixed(1);
   };
 
   const getAiInsight = (gift) => {
@@ -60,33 +56,12 @@ const GiftCard = ({ gift, onClick, analytics, recommendationEngine }) => {
   return (
     <div className="gift-card enhanced-button" onClick={handleClick}>
       <div className="gift-image-container">
-        {!imageLoaded && !imageError && (
-          <div className="image-skeleton">
-            <div className="skeleton-shimmer"></div>
-          </div>
-        )}
-
-        {!imageError ? (
-          <img
-            src={gift.image_url || 'https://images.unsplash.com/photo-1513885535751-8b9238bd345a?w=500&h=200&fit=crop'}
-            alt={gift.title}
-            onLoad={handleImageLoad}
-            onError={handleImageError}
-            style={{
-              display: imageLoaded ? 'block' : 'none',
-              width: '100%',
-              height: '200px',
-              objectFit: 'cover',
-              borderRadius: '8px 8px 0 0'
-            }}
-            loading="lazy"
-          />
-        ) : (
-          <div className="image-placeholder">
-            <div className="placeholder-icon">🎁</div>
-            <span className="placeholder-text">{gift.title}</span>
-          </div>
-        )}
+        <OptimizedImage
+          src={gift.image_url || 'https://images.unsplash.com/photo-1513885535751-8b9238bd345a?w=500&h=200&fit=crop'}
+          alt={gift.title}
+          className="gift-card-image"
+          lazy={true}
+        />
 
         {badge && (
           <span className={`gift-badge ${badge.type}`}>
@@ -105,12 +80,18 @@ const GiftCard = ({ gift, onClick, analytics, recommendationEngine }) => {
           <span className="delivery">Free shipping</span>
         </div>
 
+        {/* Add shipping urgency timer */}
+        <ShippingTimer shippingDays={2} cutoffHour={14} />
+
         <div className="rating-row">
-          <div className="hearts">
-            {getHearts(gift.success_rate)}
+          <span className="success-text" style={{fontWeight: 700, color: 'var(--color-text)'}}>
+            {getRating(gift.success_rate)}/5
+          </span>
+          <div style={{flex: 1, height: 4, background: 'var(--color-border)', borderRadius: 2, overflow: 'hidden'}}>
+            <div style={{width: `${gift.success_rate}%`, height: '100%', background: 'var(--color-accent)', borderRadius: 2}}></div>
           </div>
           <span className="success-text">
-            {gift.success_rate}% success rate
+            {gift.success_rate}%
           </span>
         </div>
 
@@ -120,9 +101,41 @@ const GiftCard = ({ gift, onClick, analytics, recommendationEngine }) => {
 
         {aiInsight && (
           <div className="ai-insight">
-            🤖 {aiInsight}
+            <span style={{fontWeight: 700, fontSize: 11, background: 'var(--color-primary)', color: 'white', padding: '1px 5px', borderRadius: 3, marginRight: 6}}>AI</span>
+            {aiInsight}
           </div>
         )}
+
+        <div className="gift-card-actions">
+          <button
+            className="btn-view-details"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleClick();
+            }}
+          >
+            View Details
+          </button>
+          <a
+            href={gift.affiliate_link || gift.buy_now_link || '#'}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-buy-now"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (window.gtag) {
+                window.gtag('event', 'affiliate_click', {
+                  gift_id: gift.id,
+                  gift_title: gift.title,
+                  price: gift.price,
+                  category: gift.category
+                });
+              }
+            }}
+          >
+            Buy Now
+          </a>
+        </div>
       </div>
     </div>
   );

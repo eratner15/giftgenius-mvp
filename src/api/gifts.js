@@ -1,5 +1,9 @@
-// API Service Layer for GiftGenius (Using Local Data)
-import { enhancedGifts } from '../data/enhanced-gifts';
+// API Service Layer for GiftGenius (Using Massive Gift Database)
+import { massiveGiftDatabase } from '../data/massive-gift-database';
+
+// Amazon Associates Configuration
+const AMAZON_ASSOCIATE_TAG = 'giftgenius-20'; // TODO: Replace with your actual Amazon Associate ID
+const AMAZON_BASE_URL = 'https://www.amazon.com/dp/';
 
 class ApiService {
   async mockGiftsAPI(url, options = {}) {
@@ -10,7 +14,14 @@ class ApiService {
     const urlObj = new URL(url, 'http://localhost');
     const params = urlObj.searchParams;
 
-    let gifts = [...enhancedGifts];
+    let gifts = [...massiveGiftDatabase];
+
+    // Add affiliate links to each gift
+    gifts = gifts.map(gift => ({
+      ...gift,
+      affiliate_link: this.generateAffiliateLink(gift),
+      buy_now_link: this.generateBuyNowLink(gift)
+    }));
 
     // Apply filters
     if (params.get('category')) {
@@ -108,6 +119,62 @@ class ApiService {
   // Fallback to local data if API is unavailable
   async getGiftsWithFallback(filters = {}) {
     return await this.getGifts(filters);
+  }
+
+  // Generate affiliate link based on network
+  generateAffiliateLink(gift) {
+    const affiliateIds = {
+      amazon: AMAZON_ASSOCIATE_TAG,
+      etsy: 'giftgenius-etsy',
+      nordstrom: 'giftgenius',
+      sephora: 'giftgenius',
+      williams_sonoma: 'giftgenius'
+    };
+
+    const network = gift.affiliate_network || 'amazon';
+    const tag = affiliateIds[network] || affiliateIds.amazon;
+
+    // Direct product URL if available
+    if (gift.product_url) {
+      const sep = gift.product_url.includes('?') ? '&' : '?';
+      return `${gift.product_url}${sep}ref=${tag}`;
+    }
+
+    // Amazon ASIN link
+    if (network === 'amazon' && gift.asin) {
+      return `${AMAZON_BASE_URL}${gift.asin}?tag=${tag}`;
+    }
+
+    // Better search query: include category + brand when available
+    const parts = [gift.title];
+    if (gift.category && !gift.title.toLowerCase().includes(gift.category)) {
+      parts.push(gift.category);
+    }
+    const searchQuery = encodeURIComponent(parts.join(' '));
+    return `https://www.amazon.com/s?k=${searchQuery}&tag=${tag}`;
+  }
+
+  // Generate "Buy Now" CTA link
+  generateBuyNowLink(gift) {
+    return this.generateAffiliateLink(gift);
+  }
+
+  // Track affiliate click (for analytics)
+  async trackAffiliateClick(giftId, network) {
+    // In production, send to analytics service
+    console.log(`Affiliate click tracked: Gift ${giftId} on ${network}`);
+
+    // Track with Google Analytics if available
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('event', 'affiliate_click', {
+        gift_id: giftId,
+        affiliate_network: network,
+        event_category: 'ecommerce',
+        event_label: 'affiliate_conversion'
+      });
+    }
+
+    return { success: true };
   }
 }
 

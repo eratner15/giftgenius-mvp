@@ -60,7 +60,7 @@ const Wishlist = ({ onClose, onGiftClick, onRemoveFromFavorites }) => {
           </div>
 
           <div className="empty-wishlist">
-            <div className="empty-icon">💝</div>
+            <div className="empty-icon">--</div>
             <h3>Your wishlist is empty</h3>
             <p>Start adding gifts you love to create your perfect wishlist!</p>
             <button className="browse-button" onClick={onClose}>
@@ -79,10 +79,10 @@ const Wishlist = ({ onClose, onGiftClick, onRemoveFromFavorites }) => {
           <h2>My Wishlist</h2>
           <div className="wishlist-actions">
             <button className="share-button" onClick={handleShare}>
-              📤 Share
+              Share
             </button>
             <button className="clear-button" onClick={handleClearAll}>
-              🗑️ Clear All
+              Clear All
             </button>
             <button className="close-button" onClick={onClose}>✕</button>
           </div>
@@ -112,7 +112,7 @@ const Wishlist = ({ onClose, onGiftClick, onRemoveFromFavorites }) => {
                 <div className="wishlist-item-price">${gift.price}</div>
                 <div className="wishlist-item-category">{gift.category}</div>
                 <div className="wishlist-item-rating">
-                  ⭐ {gift.success_rate}% success rate
+                  {gift.success_rate}% success rate
                 </div>
               </div>
 
@@ -122,13 +122,13 @@ const Wishlist = ({ onClose, onGiftClick, onRemoveFromFavorites }) => {
                   onClick={() => handleRemove(gift.id)}
                   title="Remove from wishlist"
                 >
-                  ❤️ Remove
+                  Remove
                 </button>
                 <button
                   className="view-button"
                   onClick={() => onGiftClick(gift)}
                 >
-                  👁️ View
+                  View
                 </button>
               </div>
             </div>
@@ -137,7 +137,7 @@ const Wishlist = ({ onClose, onGiftClick, onRemoveFromFavorites }) => {
 
         <div className="wishlist-footer">
           <p className="wishlist-tip">
-            💡 <strong>Tip:</strong> Share your wishlist with friends and family so they know exactly what you'd love!
+            <strong>Tip:</strong> Share your wishlist with friends and family so they know exactly what you'd love!
           </p>
         </div>
       </div>

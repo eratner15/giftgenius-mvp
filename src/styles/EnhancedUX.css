@@ -51,7 +51,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(107, 70, 193, 0.1) 0%, rgba(139, 92, 246, 0.05) 100%);
+  background: linear-gradient(135deg, rgba(26, 26, 46, 0.1) 0%, rgba(232, 168, 124, 0.05) 100%);
   opacity: 0;
   transition: opacity 0.3s ease;
   pointer-events: none;
@@ -61,8 +61,8 @@
   transform: translateY(-12px) scale(1.03);
   box-shadow:
     0 20px 40px rgba(0,0,0,0.12),
-    0 8px 16px rgba(107, 70, 193, 0.15),
-    0 0 0 1px rgba(107, 70, 193, 0.1);
+    0 8px 16px rgba(26, 26, 46, 0.15),
+    0 0 0 1px rgba(26, 26, 46, 0.1);
 }
 
 .gift-card:hover::after {
@@ -101,7 +101,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--primary);
+  background: var(--color-primary);
   animation: loading-bounce 1.4s infinite ease-in-out both;
 }
 
@@ -137,7 +137,7 @@
   left: -2px;
   right: -2px;
   bottom: -2px;
-  background: linear-gradient(45deg, var(--primary), var(--primary-light));
+  background: linear-gradient(45deg, var(--color-primary), var(--color-accent));
   border-radius: 10px;
   opacity: 0;
   z-index: -1;
@@ -201,7 +201,7 @@
 }
 
 .suggestion-item:hover {
-  background: linear-gradient(90deg, var(--gray-50) 0%, rgba(107, 70, 193, 0.05) 100%);
+  background: linear-gradient(90deg, var(--gray-50) 0%, rgba(26, 26, 46, 0.05) 100%);
   transform: translateX(4px);
 }
 
@@ -245,7 +245,7 @@
   left: -100%;
   width: 100%;
   height: 100%;
-  background: var(--primary);
+  background: var(--color-primary);
   transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 0;
 }
@@ -256,7 +256,7 @@
 
 .filter-toggle.active {
   color: white;
-  border-color: var(--primary);
+  border-color: var(--color-primary);
   transform: scale(1.05);
 }
 
@@ -267,9 +267,9 @@
 }
 
 .filter-toggle:hover:not(.active) {
-  border-color: var(--primary);
+  border-color: var(--color-primary);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(107, 70, 193, 0.15);
+  box-shadow: 0 4px 12px rgba(26, 26, 46, 0.15);
 }
 
 /* Sort Option Transitions */
@@ -311,7 +311,7 @@
 }
 
 .sort-btn.active {
-  color: var(--primary);
+  color: var(--color-primary);
   font-weight: 600;
 }
 
@@ -336,7 +336,7 @@
 
 @keyframes count-update {
   0% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-20px) scale(1.1); color: var(--primary); }
+  50% { transform: translateY(-20px) scale(1.1); color: var(--color-primary); }
   100% { transform: translateY(0) scale(1); }
 }
 
@@ -346,7 +346,7 @@
 
 .hero {
   position: relative;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
   overflow: hidden;
 }
 
@@ -475,7 +475,7 @@
 
 .personalization-banner {
   position: relative;
-  background: linear-gradient(135deg, var(--info) 0%, var(--primary) 100%);
+  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-primary) 100%);
   overflow: hidden;
 }
 
@@ -556,9 +556,9 @@
   right: 0;
   bottom: 0;
   background: linear-gradient(135deg,
-    rgba(107, 70, 193, 0.05) 0%,
-    rgba(139, 92, 246, 0.1) 50%,
-    rgba(107, 70, 193, 0.05) 100%
+    rgba(26, 26, 46, 0.05) 0%,
+    rgba(232, 168, 124, 0.1) 50%,
+    rgba(26, 26, 46, 0.05) 100%
   );
   opacity: 0;
   transition: all 0.3s ease;
@@ -567,7 +567,7 @@
 
 .recommendation-card:hover {
   transform: translateY(-4px) scale(1.02);
-  box-shadow: 0 12px 24px rgba(107, 70, 193, 0.15);
+  box-shadow: 0 12px 24px rgba(26, 26, 46, 0.15);
 }
 
 .recommendation-card:hover::before {
@@ -577,7 +577,7 @@
 .recommendation-reason {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(90deg, var(--info), var(--primary));
+  background: linear-gradient(90deg, var(--color-accent), var(--color-primary));
   background-size: 200% 100%;
   -webkit-background-clip: text;
   background-clip: text;
@@ -707,9 +707,9 @@
   right: 0;
   bottom: 0;
   background: linear-gradient(135deg,
-    rgba(107, 70, 193, 0.1) 0%,
-    rgba(139, 92, 246, 0.15) 50%,
-    rgba(107, 70, 193, 0.1) 100%
+    rgba(26, 26, 46, 0.1) 0%,
+    rgba(232, 168, 124, 0.15) 50%,
+    rgba(26, 26, 46, 0.1) 100%
   );
   opacity: 0;
   transition: opacity 0.3s ease;
@@ -717,10 +717,10 @@
 
 .quick-btn:hover {
   transform: translateY(-6px) scale(1.03);
-  border-color: var(--primary);
+  border-color: var(--color-primary);
   box-shadow:
     0 15px 30px rgba(0,0,0,0.1),
-    0 5px 15px rgba(107, 70, 193, 0.2);
+    0 5px 15px rgba(26, 26, 46, 0.2);
 }
 
 .quick-btn:hover::after {
@@ -791,7 +791,7 @@
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, var(--primary), transparent);
+  background: linear-gradient(90deg, transparent, var(--color-primary), transparent);
   transition: left 0.5s ease;
 }
 
@@ -849,7 +849,7 @@
 }
 
 .close-btn:hover {
-  color: var(--danger);
+  color: var(--color-error);
 }
 
 /* ====================================
@@ -896,7 +896,7 @@
 .gift-card:focus,
 .quick-btn:focus,
 .recommendation-card:focus {
-  outline: 3px solid rgba(107, 70, 193, 0.5);
+  outline: 3px solid rgba(26, 26, 46, 0.5);
   outline-offset: 2px;
 }
 

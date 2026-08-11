@@ -1,0 +1,61 @@
+/* Floating AI Assistant Button */
+.floating-ai-button {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: auto;
+  height: 56px;
+  padding: 0 20px;
+  background: var(--color-primary);
+  border: none;
+  border-radius: var(--radius-xl);
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(26, 26, 46, 0.2);
+  transition: all 0.2s ease;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.floating-ai-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(26, 26, 46, 0.3);
+  background: var(--color-secondary);
+}
+
+.floating-ai-button:active {
+  transform: translateY(-1px);
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  .floating-ai-button {
+    height: 48px;
+    padding: 0 16px;
+    bottom: 20px;
+    right: 20px;
+    font-size: 14px;
+  }
+}
+
+/* Accessibility improvements */
+.floating-ai-button:focus {
+  outline: 3px solid rgba(26, 26, 46, 0.4);
+  outline-offset: 2px;
+}
+
+/* Reduced motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  .floating-ai-button {
+    transition: none;
+  }
+
+  .floating-ai-button:hover {
+    transform: none;
+  }
+}

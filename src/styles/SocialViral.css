@@ -156,12 +156,12 @@
 }
 
 .type-option:hover {
-  border-color: #6366f1;
+  border-color: var(--color-accent);
 }
 
 .type-option.active {
-  background: #6366f1;
-  border-color: #6366f1;
+  background: var(--color-accent);
+  border-color: var(--color-accent);
   color: white;
 }
 
@@ -203,7 +203,7 @@
 .native-share-btn {
   width: 100%;
   padding: 12px;
-  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  background: var(--color-accent);
   color: white;
   border: none;
   border-radius: 8px;
@@ -286,7 +286,7 @@
 }
 
 .ticker-text strong {
-  color: #6366f1;
+  color: var(--color-accent);
   font-weight: 600;
 }
 
@@ -326,7 +326,7 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  background: var(--color-accent);
   color: white;
   display: flex;
   align-items: center;
@@ -530,14 +530,14 @@
   flex: 1;
   font-size: 24px;
   font-weight: 700;
-  color: #6366f1;
+  color: var(--color-accent);
   letter-spacing: 2px;
   text-align: center;
 }
 
 .copy-code-btn {
   padding: 8px 12px;
-  background: #6366f1;
+  background: var(--color-accent);
   color: white;
   border: none;
   border-radius: 6px;
@@ -568,7 +568,7 @@
   display: block;
   font-size: 28px;
   font-weight: 700;
-  color: #6366f1;
+  color: var(--color-accent);
   margin-bottom: 4px;
 }
 
@@ -586,7 +586,7 @@
 .share-referral-btn {
   width: 100%;
   padding: 14px;
-  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  background: var(--color-accent);
   color: white;
   border: none;
   border-radius: 12px;
@@ -693,7 +693,7 @@
 }
 
 .invite-btn {
-  background: #6366f1;
+  background: var(--color-accent);
   color: white;
   border: none;
 }
@@ -745,7 +745,7 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  background: var(--color-accent);
   color: white;
   display: flex;
   align-items: center;
@@ -915,7 +915,7 @@
 
 .add-comment button {
   padding: 8px 16px;
-  background: #6366f1;
+  background: var(--color-accent);
   color: white;
   border: none;
   border-radius: 6px;
@@ -980,7 +980,7 @@
   display: block;
   font-size: 24px;
   font-weight: 700;
-  color: #6366f1;
+  color: var(--color-accent);
 }
 
 .participant-label {
@@ -1145,7 +1145,7 @@
 .reward-value {
   font-size: 18px;
   font-weight: 700;
-  color: #6366f1;
+  color: var(--color-accent);
   margin-bottom: 2px;
 }
 
@@ -1184,7 +1184,7 @@
 }
 
 .share-challenge-btn {
-  background: #6366f1;
+  background: var(--color-accent);
   color: white;
   border: none;
 }
@@ -1257,14 +1257,14 @@
 }
 
 .filter-btn:hover {
-  border-color: #6366f1;
-  color: #6366f1;
+  border-color: var(--color-accent);
+  color: var(--color-accent);
 }
 
 .filter-btn.active {
-  background: #6366f1;
+  background: var(--color-accent);
   color: white;
-  border-color: #6366f1;
+  border-color: var(--color-accent);
 }
 
 .leaderboard-list {
@@ -1289,7 +1289,7 @@
 
 .leaderboard-entry.current-user {
   background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
-  border: 2px solid #6366f1;
+  border: 2px solid var(--color-accent);
 }
 
 .rank {
@@ -1304,7 +1304,7 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  background: var(--color-accent);
   color: white;
   display: flex;
   align-items: center;
@@ -1366,7 +1366,7 @@
 .earned-count {
   font-size: 24px;
   font-weight: 700;
-  color: #6366f1;
+  color: var(--color-accent);
 }
 
 .earned-label {
@@ -1587,7 +1587,7 @@
 }
 
 .modal-actions button.primary {
-  background: #6366f1;
+  background: var(--color-accent);
   color: white;
   border: none;
 }

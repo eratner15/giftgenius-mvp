@@ -501,8 +501,8 @@ export const ConversionCTA = ({ gift, urgencyEngine, socialProofEngine, onAction
         boxShadow: '0 4px 20px rgba(245, 158, 11, 0.4)',
       },
       'medium': {
-        background: 'linear-gradient(135deg, #6B46C1, #553C9A)',
-        boxShadow: '0 4px 20px rgba(107, 70, 193, 0.4)',
+        background: '#1A1A2E',
+        boxShadow: '0 4px 20px rgba(26, 26, 46, 0.4)',
       }
     };
 

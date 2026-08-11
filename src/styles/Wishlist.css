@@ -2,7 +2,7 @@
 .wishlist-toggle {
   position: fixed;
   bottom: 24px;
-  right: 104px; /* Position to the left of AI chat button */
+  right: 184px; /* Position to the left of comparison button */
   width: 64px;
   height: 64px;
   border: none;
@@ -19,6 +19,44 @@
   align-items: center;
   justify-content: center;
   gap: 4px;
+}
+
+/* Comparison Toggle Button */
+.comparison-toggle {
+  position: fixed;
+  bottom: 24px;
+  right: 104px; /* Position to the left of AI chat button */
+  width: 64px;
+  height: 64px;
+  border: none;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  border-radius: 50%;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
+  z-index: 1500;
+  transition: all 0.3s;
+  animation: comparisonFloat 3s ease-in-out infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.comparison-toggle:hover {
+  transform: scale(1.1);
+  box-shadow: 0 15px 40px rgba(16, 185, 129, 0.5);
+}
+
+@keyframes comparisonFloat {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+    box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
+  }
+  50% {
+    transform: translateY(-3px) rotate(5deg);
+    box-shadow: 0 15px 35px rgba(16, 185, 129, 0.5);
+  }
 }
 
 .wishlist-toggle:hover {
@@ -85,7 +123,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: linear-gradient(135deg, #6b46c1 0%, #9333ea 100%);
+  background: var(--color-primary);
   color: white;
 }
 
@@ -160,7 +198,7 @@
 }
 
 .browse-button {
-  background: linear-gradient(135deg, #6b46c1 0%, #9333ea 100%);
+  background: var(--color-primary);
   color: white;
   border: none;
   padding: 12px 32px;
@@ -173,7 +211,7 @@
 
 .browse-button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(107, 70, 193, 0.3);
+  box-shadow: 0 4px 12px rgba(26, 26, 46, 0.3);
 }
 
 /* Wishlist Summary */
@@ -198,7 +236,7 @@
 .total-value {
   font-size: 20px;
   font-weight: 700;
-  color: #6b46c1;
+  color: var(--color-primary);
 }
 
 /* Wishlist Grid */
@@ -276,7 +314,7 @@
 }
 
 .wishlist-item-title:hover {
-  color: #6b46c1;
+  color: var(--color-primary);
 }
 
 .wishlist-item-price {
@@ -326,7 +364,7 @@
 .view-button {
   flex: 1;
   background: #ede9fe;
-  color: #6b46c1;
+  color: var(--color-primary);
   border: 1px solid #ddd6fe;
   padding: 8px 16px;
   border-radius: 6px;

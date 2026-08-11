@@ -1,17 +1,31 @@
 import React, { useState, useRef, useEffect } from 'react';
-import openAIService from '../services/openai';
+import { massiveGiftDatabase } from '../data/massive-gift-database';
 
 const AIGiftingExpert = ({ onClose, gifts, onRecommendGift }) => {
   const [messages, setMessages] = useState([
     {
       id: 1,
       role: 'assistant',
-      content: "Hi! I'm your AI Gifting Expert 🎁. I've helped thousands find the perfect gift. Tell me about who you're shopping for and I'll give you personalized recommendations!",
-      timestamp: new Date()
+      content: "Hi! I'm your personal gift expert. Tell me about who you're shopping for and I'll help you find the perfect gift. What's the occasion?",
+      timestamp: new Date(),
+      type: 'welcome'
     }
   ]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [suggestedQuestions, setSuggestedQuestions] = useState([
+    "Birthday gift for my mom who loves gardening",
+    "Anniversary surprise for my tech-savvy husband",
+    "Thank you gift for a colleague under $50",
+    "Christmas gift for teenage daughter"
+  ]);
+  const [conversationContext, setConversationContext] = useState({
+    recipient: '',
+    occasion: '',
+    budget: '',
+    interests: [],
+    relationship: ''
+  });
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -22,103 +36,68 @@ const AIGiftingExpert = ({ onClose, gifts, onRecommendGift }) => {
     scrollToBottom();
   }, [messages]);
 
-  // Simple AI response generator (you can integrate real AI API later)
-  const generateAIResponse = (userMessage) => {
-    const lowerMessage = userMessage.toLowerCase();
+  const quickActions = [
+    { label: 'Birthday', value: 'birthday gift' },
+    { label: 'Anniversary', value: 'anniversary gift' },
+    { label: 'Holiday', value: 'holiday gift' },
+    { label: 'Thank You', value: 'thank you gift' },
+    { label: 'Graduation', value: 'graduation gift' },
+    { label: 'Baby Shower', value: 'baby shower gift' }
+  ];
 
-    // Detect keywords and recommend gifts
-    let response = '';
-    let recommendedGifts = [];
+  const extractContext = (message) => {
+    const lowerMessage = message.toLowerCase();
+    const context = { ...conversationContext };
 
-    // Budget detection
-    const budgetMatch = userMessage.match(/\$?(\d+)/);
-    const budget = budgetMatch ? parseInt(budgetMatch[1]) : null;
+    const occasions = ['birthday', 'anniversary', 'christmas', 'holiday', 'graduation', 'wedding', 'valentine', "mother's day", "father's day"];
+    occasions.forEach(occasion => {
+      if (lowerMessage.includes(occasion)) context.occasion = occasion;
+    });
 
-    // Category detection
-    if (lowerMessage.includes('tech') || lowerMessage.includes('gadget') || lowerMessage.includes('electronic')) {
-      recommendedGifts = gifts.filter(g => g.category === 'tech');
-      response = "Great choice! Tech gifts are always popular. ";
-    } else if (lowerMessage.includes('jewelry') || lowerMessage.includes('necklace') || lowerMessage.includes('bracelet')) {
-      recommendedGifts = gifts.filter(g => g.category === 'jewelry');
-      response = "Jewelry is such a thoughtful and lasting gift! ";
-    } else if (lowerMessage.includes('home') || lowerMessage.includes('house') || lowerMessage.includes('decor')) {
-      recommendedGifts = gifts.filter(g => g.category === 'home');
-      response = "Home gifts are perfect for making their space more comfortable! ";
-    } else if (lowerMessage.includes('experience') || lowerMessage.includes('date') || lowerMessage.includes('memory')) {
-      recommendedGifts = gifts.filter(g => g.category === 'experiences');
-      response = "Experiences create lasting memories - what a wonderful idea! ";
-    } else if (lowerMessage.includes('food') || lowerMessage.includes('chocolate') || lowerMessage.includes('coffee') || lowerMessage.includes('wine')) {
-      recommendedGifts = gifts.filter(g => g.category === 'food');
-      response = "Food gifts are always appreciated by foodies! ";
-    } else if (lowerMessage.includes('fashion') || lowerMessage.includes('clothes') || lowerMessage.includes('style')) {
-      recommendedGifts = gifts.filter(g => g.category === 'fashion');
-      response = "Fashion gifts show you pay attention to their style! ";
-    } else if (lowerMessage.includes('unique') || lowerMessage.includes('special') || lowerMessage.includes('personalized')) {
-      recommendedGifts = gifts.filter(g => g.category === 'unique');
-      response = "Unique gifts show extra thought and care! ";
-    }
-
-    // Occasion detection
-    if (lowerMessage.includes('birthday')) {
-      response += "For birthdays, I recommend something that celebrates their personality. ";
-    } else if (lowerMessage.includes('anniversary')) {
-      response += "Anniversaries call for something romantic and meaningful. ";
-    } else if (lowerMessage.includes('wedding')) {
-      response += "Wedding gifts should be practical yet memorable for the couple. ";
-    } else if (lowerMessage.includes('thank you') || lowerMessage.includes('thanks')) {
-      response += "A thank you gift should be thoughtful without being overwhelming. ";
-    }
-
-    // Recipient detection
-    if (lowerMessage.includes('mom') || lowerMessage.includes('mother')) {
-      response += "Moms love gifts that show you appreciate everything they do. ";
-    } else if (lowerMessage.includes('dad') || lowerMessage.includes('father')) {
-      response += "Dads often appreciate practical gifts they can use. ";
-    } else if (lowerMessage.includes('wife') || lowerMessage.includes('husband') || lowerMessage.includes('partner')) {
-      response += "Your partner will appreciate something that shows how well you know them. ";
-    } else if (lowerMessage.includes('friend')) {
-      response += "Friend gifts should be fun and reflect your shared interests. ";
-    } else if (lowerMessage.includes('boss') || lowerMessage.includes('coworker')) {
-      response += "Professional gifts should be tasteful and not too personal. ";
-    }
-
-    // Budget filter
-    if (budget && recommendedGifts.length > 0) {
-      recommendedGifts = recommendedGifts.filter(g => g.price <= budget * 1.2); // 20% over budget is ok
-      response += `I'm keeping things around your $${budget} budget. `;
-    }
-
-    // Generic responses if no matches
-    if (recommendedGifts.length === 0) {
-      if (lowerMessage.includes('help') || lowerMessage.includes('hi') || lowerMessage.includes('hello')) {
-        return "I'd love to help you find the perfect gift! Could you tell me:\n• Who are you shopping for?\n• What's the occasion?\n• Do you have a budget in mind?\n• What are their interests or hobbies?";
+    const relationships = ['mom', 'dad', 'wife', 'husband', 'girlfriend', 'boyfriend', 'friend', 'colleague', 'boss', 'sister', 'brother', 'daughter', 'son'];
+    relationships.forEach(rel => {
+      if (lowerMessage.includes(rel)) {
+        context.recipient = rel;
+        context.relationship = rel;
       }
+    });
 
-      // Show some popular gifts
-      recommendedGifts = gifts
-        .sort((a, b) => b.success_rate - a.success_rate)
-        .slice(0, 3);
-      response = "Let me show you some of our most popular gifts that have high success rates! ";
+    const budgetMatch = lowerMessage.match(/\$(\d+)|under (\d+)|(\d+) dollars/);
+    if (budgetMatch) {
+      context.budget = budgetMatch[1] || budgetMatch[2] || budgetMatch[3];
     }
 
-    // Limit to top 3 recommendations
-    recommendedGifts = recommendedGifts.slice(0, 3);
+    const interests = ['tech', 'cooking', 'reading', 'fitness', 'travel', 'art', 'music', 'gaming', 'fashion', 'gardening', 'sports'];
+    interests.forEach(interest => {
+      if (lowerMessage.includes(interest) && !context.interests.includes(interest)) {
+        context.interests = [...context.interests, interest];
+      }
+    });
 
-    if (recommendedGifts.length > 0) {
-      response += `\n\nHere are my top ${recommendedGifts.length} recommendation${recommendedGifts.length > 1 ? 's' : ''}:`;
-    } else {
-      response += "\n\nCould you tell me more about the person and occasion? I'll find the perfect gift!";
-    }
-
-    return { response, gifts: recommendedGifts };
+    setConversationContext(context);
+    return context;
   };
 
-  const handleSend = async () => {
+  const generateFollowUpQuestions = (context) => {
+    const questions = [];
+    if (!context.budget) questions.push("What's your budget for this gift?");
+    if (!context.recipient) questions.push("Who is this gift for?");
+    if (!context.occasion) questions.push("What's the special occasion?");
+    if (context.interests.length === 0) questions.push("What are their hobbies or interests?");
+    return questions;
+  };
+
+  const lookupGifts = (ids) => {
+    return ids
+      .map(id => massiveGiftDatabase.find(g => g.id === id))
+      .filter(Boolean);
+  };
+
+  const handleSendMessage = async () => {
     if (!input.trim()) return;
 
-    // Add user message
     const userMessage = {
-      id: messages.length + 1,
+      id: Date.now(),
       role: 'user',
       content: input,
       timestamp: new Date()
@@ -129,151 +108,225 @@ const AIGiftingExpert = ({ onClose, gifts, onRecommendGift }) => {
     setInput('');
     setIsTyping(true);
 
+    const context = extractContext(currentInput);
+
     try {
-      // Prepare messages for OpenAI API (exclude recommendations and metadata)
-      const apiMessages = [...messages, userMessage].map(m => ({
-        role: m.role,
-        content: m.content
-      }));
+      // Build history from past messages
+      const history = messages
+        .filter(m => m.role === 'user' || (m.role === 'assistant' && m.type !== 'welcome'))
+        .map(m => ({ role: m.role, content: m.content }));
 
-      const { response, gifts: recommendedGifts } = await openAIService.getChatResponse(apiMessages, gifts);
+      const res = await fetch('/gifts/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: currentInput, history })
+      });
 
-      const aiMessage = {
-        id: messages.length + 2,
+      if (!res.ok) throw new Error(`API error ${res.status}`);
+
+      const data = await res.json();
+      const recommendations = lookupGifts(data.recommendedIds || []);
+
+      const assistantMessage = {
+        id: Date.now() + 1,
         role: 'assistant',
-        content: response,
-        recommendations: recommendedGifts,
-        timestamp: new Date()
+        content: data.response,
+        timestamp: new Date(),
+        recommendations: recommendations.length > 0 ? recommendations : undefined,
+        type: 'recommendation'
       };
 
-      setMessages(prev => [...prev, aiMessage]);
+      setMessages(prev => [...prev, assistantMessage]);
+
+      const followUp = generateFollowUpQuestions(context);
+      if (followUp.length > 0) setSuggestedQuestions(followUp);
+
     } catch (error) {
-      console.error('Error getting AI response:', error);
+      console.error('AI response error:', error);
 
-      // Fallback to local response if API fails
-      const { response, gifts: recommendedGifts } = generateAIResponse(currentInput);
-
-      const aiMessage = {
-        id: messages.length + 2,
+      // Fallback: show popular gifts
+      const fallbackMessage = {
+        id: Date.now() + 1,
         role: 'assistant',
-        content: response + '\n\n(Note: Using offline mode)',
-        recommendations: recommendedGifts,
-        timestamp: new Date()
+        content: "I'm having trouble connecting right now, but let me show you some popular gifts that might work!",
+        timestamp: new Date(),
+        recommendations: (gifts || []).slice(0, 3)
       };
 
-      setMessages(prev => [...prev, aiMessage]);
+      setMessages(prev => [...prev, fallbackMessage]);
     } finally {
       setIsTyping(false);
     }
   };
 
+  const handleQuickAction = (action) => {
+    setInput(action.value);
+  };
+
+  const handleSuggestedQuestion = (question) => {
+    setInput(question);
+  };
+
   const handleKeyPress = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      handleSend();
+      handleSendMessage();
     }
   };
 
-  const quickPrompts = [
-    "Gift for my wife's birthday under $200",
-    "Anniversary gift for parents",
-    "Tech gift for dad",
-    "Unique gift for best friend"
-  ];
+  const handleRecommendationClick = (gift) => {
+    onRecommendGift?.(gift);
+  };
 
   return (
-    <div className="ai-chat-widget">
-      <div className="chat-header">
-        <div className="chat-header-info">
-          <div className="ai-avatar">🤖</div>
-          <div>
-            <h3>AI Gifting Expert</h3>
-            <span className="status">● Online</span>
+    <div className="ai-chat-overlay">
+      <div className="ai-chat-container">
+        <div className="ai-chat-header">
+          <div className="ai-header-content">
+            <div className="ai-avatar-container">
+              <div className="ai-avatar">
+                <span className="ai-avatar-icon">AI</span>
+                <div className="ai-status-indicator"></div>
+              </div>
+              <div className="ai-info">
+                <h3>AI Gift Expert</h3>
+                <p className="ai-status">Online • Ready to help</p>
+              </div>
+            </div>
+            <button className="ai-close-btn" onClick={onClose}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+              </svg>
+            </button>
           </div>
         </div>
-        <button className="chat-close" onClick={onClose}>✕</button>
-      </div>
 
-      <div className="chat-messages">
-        {messages.map((message) => (
-          <div key={message.id} className={`message ${message.role}`}>
-            {message.role === 'assistant' && (
-              <div className="message-avatar">🤖</div>
-            )}
-            <div className="message-content">
-              <p>{message.content}</p>
+        <div className="quick-actions-bar">
+          <div className="quick-actions-scroll">
+            {quickActions.map((action, index) => (
+              <button
+                key={index}
+                className="quick-action-btn"
+                onClick={() => handleQuickAction(action)}
+              >
+                <span className="action-label">{action.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
 
-              {message.recommendations && message.recommendations.length > 0 && (
-                <div className="gift-recommendations">
-                  {message.recommendations.map((gift) => (
-                    <div
-                      key={gift.id}
-                      className="mini-gift-card"
-                      onClick={() => onRecommendGift(gift)}
-                    >
-                      <img src={gift.image_url} alt={gift.title} />
-                      <div className="mini-gift-info">
-                        <div className="mini-gift-title">{gift.title}</div>
-                        <div className="mini-gift-price">${gift.price}</div>
-                        <div className="mini-gift-rating">
-                          {gift.success_rate}% success rate
+        <div className="ai-chat-messages">
+          {messages.map((message) => (
+            <div key={message.id} className={`message-wrapper ${message.role}`}>
+              {message.role === 'assistant' && (
+                <div className="message-avatar">
+                  <span>AI</span>
+                </div>
+              )}
+
+              <div className={`message-bubble ${message.type || ''}`}>
+                <p className="message-content">{message.content}</p>
+
+                {message.recommendations && message.recommendations.length > 0 && (
+                  <div className="gift-recommendations">
+                    {message.recommendations.map((gift, index) => (
+                      <div
+                        key={index}
+                        className="recommendation-card"
+                        onClick={() => handleRecommendationClick(gift)}
+                      >
+                        <img src={gift.image_url} alt={gift.title} />
+                        <div className="recommendation-info">
+                          <h4>{gift.title}</h4>
+                          <p className="recommendation-description">
+                            {gift.description?.slice(0, 60)}...
+                          </p>
+                          <div className="recommendation-meta">
+                            <span className="price">${gift.price}</span>
+                            <span className="rating">★ {gift.rating}</span>
+                            {gift.success_rate > 90 && (
+                              <span className="popular-badge">Popular</span>
+                            )}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
+                )}
+
+                <span className="message-time">
+                  {new Date(message.timestamp).toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}
+                </span>
+              </div>
+
+              {message.role === 'user' && (
+                <div className="message-avatar user-avatar">
+                  <span>You</span>
                 </div>
               )}
             </div>
-            {message.role === 'user' && (
-              <div className="message-avatar user">👤</div>
-            )}
-          </div>
-        ))}
+          ))}
 
-        {isTyping && (
-          <div className="message assistant">
-            <div className="message-avatar">🤖</div>
-            <div className="message-content typing">
-              <span></span>
-              <span></span>
-              <span></span>
+          {isTyping && (
+            <div className="message-wrapper assistant">
+              <div className="message-avatar">
+                <span>AI</span>
+              </div>
+              <div className="message-bubble typing-bubble">
+                <div className="typing-indicator">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div ref={messagesEndRef} />
+        </div>
+
+        {suggestedQuestions.length > 0 && (
+          <div className="suggested-questions">
+            <p className="suggestions-label">Suggestions:</p>
+            <div className="questions-scroll">
+              {suggestedQuestions.map((question, index) => (
+                <button
+                  key={index}
+                  className="suggested-question-btn"
+                  onClick={() => handleSuggestedQuestion(question)}
+                >
+                  {question}
+                </button>
+              ))}
             </div>
           </div>
         )}
 
-        <div ref={messagesEndRef} />
-      </div>
-
-      {messages.length <= 1 && (
-        <div className="quick-prompts">
-          <p>Try asking:</p>
-          {quickPrompts.map((prompt, index) => (
+        <div className="ai-chat-input-area">
+          <div className="input-container">
+            <textarea
+              className="ai-chat-input"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyPress={handleKeyPress}
+              placeholder="Describe who you're shopping for..."
+              rows={1}
+            />
             <button
-              key={index}
-              className="quick-prompt"
-              onClick={() => setInput(prompt)}
+              className="ai-send-btn"
+              onClick={handleSendMessage}
+              disabled={!input.trim() || isTyping}
             >
-              {prompt}
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M2 10L17 2L13 18L11 11L2 10Z" fill="currentColor"/>
+              </svg>
             </button>
-          ))}
+          </div>
+          <p className="input-helper">Press Enter to send • Shift+Enter for new line</p>
         </div>
-      )}
-
-      <div className="chat-input">
-        <textarea
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyPress={handleKeyPress}
-          placeholder="Describe who you're shopping for..."
-          rows={1}
-        />
-        <button
-          className="send-button"
-          onClick={handleSend}
-          disabled={!input.trim()}
-        >
-          ➤
-        </button>
       </div>
     </div>
   );

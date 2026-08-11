@@ -10,21 +10,21 @@ const QuickGiftFinder = ({ onComplete, onClose }) => {
   });
 
   const occasions = [
-    { id: 'birthday', emoji: '🎂', label: 'Birthday' },
-    { id: 'anniversary', emoji: '💑', label: 'Anniversary' },
-    { id: 'wedding', emoji: '💍', label: 'Wedding' },
-    { id: 'holiday', emoji: '🎄', label: 'Holiday' },
-    { id: 'thankyou', emoji: '🙏', label: 'Thank You' },
-    { id: 'justthanks', emoji: '💝', label: 'Just Because' }
+    { id: 'birthday', label: 'Birthday' },
+    { id: 'anniversary', label: 'Anniversary' },
+    { id: 'wedding', label: 'Wedding' },
+    { id: 'holiday', label: 'Holiday' },
+    { id: 'thankyou', label: 'Thank You' },
+    { id: 'justthanks', label: 'Just Because' }
   ];
 
   const recipients = [
-    { id: 'partner', emoji: '❤️', label: 'Partner/Spouse' },
-    { id: 'parent', emoji: '👨‍👩‍👧', label: 'Parent' },
-    { id: 'friend', emoji: '👯', label: 'Friend' },
-    { id: 'coworker', emoji: '💼', label: 'Coworker' },
-    { id: 'family', emoji: '👪', label: 'Family Member' },
-    { id: 'other', emoji: '🎁', label: 'Someone Else' }
+    { id: 'partner', label: 'Partner/Spouse' },
+    { id: 'parent', label: 'Parent' },
+    { id: 'friend', label: 'Friend' },
+    { id: 'coworker', label: 'Coworker' },
+    { id: 'family', label: 'Family Member' },
+    { id: 'other', label: 'Someone Else' }
   ];
 
   const budgets = [
@@ -35,14 +35,14 @@ const QuickGiftFinder = ({ onComplete, onClose }) => {
   ];
 
   const interests = [
-    { id: 'fashion', emoji: '👗', label: 'Fashion' },
-    { id: 'tech', emoji: '📱', label: 'Technology' },
-    { id: 'home', emoji: '🏠', label: 'Home Decor' },
-    { id: 'food', emoji: '🍷', label: 'Food & Drink' },
-    { id: 'beauty', emoji: '💄', label: 'Beauty' },
-    { id: 'experiences', emoji: '🎭', label: 'Experiences' },
-    { id: 'jewelry', emoji: '💎', label: 'Jewelry' },
-    { id: 'unique', emoji: '✨', label: 'Unique Items' }
+    { id: 'fashion', label: 'Fashion' },
+    { id: 'tech', label: 'Technology' },
+    { id: 'home', label: 'Home Decor' },
+    { id: 'food', label: 'Food & Drink' },
+    { id: 'beauty', label: 'Beauty' },
+    { id: 'experiences', label: 'Experiences' },
+    { id: 'jewelry', label: 'Jewelry' },
+    { id: 'unique', label: 'Unique Items' }
   ];
 
   const selectOption = (field, value) => {
@@ -85,7 +85,6 @@ const QuickGiftFinder = ({ onComplete, onClose }) => {
                   className={`option-card ${answers.occasion === option.id ? 'selected' : ''}`}
                   onClick={() => selectOption('occasion', option.id)}
                 >
-                  <span className="option-emoji">{option.emoji}</span>
                   <span className="option-label">{option.label}</span>
                 </button>
               ))}
@@ -104,7 +103,6 @@ const QuickGiftFinder = ({ onComplete, onClose }) => {
                   className={`option-card ${answers.recipient === option.id ? 'selected' : ''}`}
                   onClick={() => selectOption('recipient', option.id)}
                 >
-                  <span className="option-emoji">{option.emoji}</span>
                   <span className="option-label">{option.label}</span>
                 </button>
               ))}
@@ -142,7 +140,6 @@ const QuickGiftFinder = ({ onComplete, onClose }) => {
                   className={`option-card multi ${answers.interests.includes(option.id) ? 'selected' : ''}`}
                   onClick={() => toggleInterest(option.id)}
                 >
-                  <span className="option-emoji">{option.emoji}</span>
                   <span className="option-label">{option.label}</span>
                 </button>
               ))}
